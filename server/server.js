@@ -18,7 +18,7 @@ const server = http.createServer(app);
 // Global Socket.io attachment to use in controllers for Real-time Notifications
 const io = new Server(server, {
     cors: {
-        origin: 'http://localhost:5173',
+        origin: process.env.CLIENT_URL || 'http://localhost:5173',
         credentials: true,
     }
 });
@@ -41,7 +41,7 @@ const apiLimiter = rateLimit({
 
 // Middleware
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: process.env.CLIENT_URL || 'http://localhost:5173',
     credentials: true,
 }));
 app.use(express.json());
