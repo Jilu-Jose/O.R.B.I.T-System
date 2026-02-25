@@ -43,7 +43,8 @@ const ManagerDashboard = () => {
     useEffect(() => {
         fetchData();
 
-        const socket = io('http://localhost:5000');
+        const SOCKET_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+        const socket = io(SOCKET_URL);
         socket.on('new_leave_request', (data) => {
             toast(`New leave request from ${data.employeeName}`, { icon: '🔔' });
             fetchData();
