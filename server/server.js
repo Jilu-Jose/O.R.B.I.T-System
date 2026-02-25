@@ -18,7 +18,7 @@ const server = http.createServer(app);
 // Global Socket.io attachment to use in controllers for Real-time Notifications
 const io = new Server(server, {
     cors: {
-        origin: process.env.CLIENT_URL || 'http://localhost:5173',
+        origin: process.env.CLIENT_URL || ['http://localhost:5173', 'http://localhost:5174'],
         credentials: true,
     }
 });
@@ -41,7 +41,7 @@ const apiLimiter = rateLimit({
 
 // Middleware
 app.use(cors({
-    origin: process.env.CLIENT_URL || 'http://localhost:5173',
+    origin: process.env.CLIENT_URL || ['http://localhost:5173', 'http://localhost:5174'],
     credentials: true,
 }));
 app.use(express.json());
@@ -54,6 +54,7 @@ app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/leaves', require('./routes/leaveRoutes'));
 app.use('/api/analytics', require('./routes/analyticsRoutes'));
+app.use('/api/reimbursements', require('./routes/reimbursementRoutes'));
 
 // Default route
 app.get('/', (req, res) => {

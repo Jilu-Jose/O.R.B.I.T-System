@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import {
     LogOut, Sun, Moon, Menu, X, Home,
-    CalendarDays, Users, Clock
+    CalendarDays, Users, Clock, IndianRupee
 } from 'lucide-react';
 
 const MainLayout = ({ children }) => {
@@ -23,7 +23,8 @@ const MainLayout = ({ children }) => {
         { name: 'Dashboard', path: '/', icon: <Home className="w-5 h-5" />, roles: ['Employee', 'Manager', 'Admin'] },
         { name: 'Apply Leave', path: '/apply', icon: <CalendarDays className="w-5 h-5" />, roles: ['Employee'] },
         { name: 'Leave History', path: '/history', icon: <Clock className="w-5 h-5" />, roles: ['Employee'] },
-        { name: 'Holiday Calendar', path: '/holidays', icon: <Sun className="w-5 h-5" />, roles: ['Employee'] },
+        { name: 'Holiday Calendar', path: '/holidays', icon: <Sun className="w-5 h-5" />, roles: ['Employee', 'Manager', 'Admin'] },
+        { name: 'Reimbursements', path: '/reimbursements', icon: <IndianRupee className="w-5 h-5" />, roles: ['Employee', 'Manager', 'Admin'] },
         { name: 'Team Leaves', path: '/employee', icon: <Users className="w-5 h-5" />, roles: ['Manager'] },
         { name: 'User Management', path: '/users', icon: <Users className="w-5 h-5" />, roles: ['Admin'] },
         { name: 'Leaves Board', path: '/manager', icon: <CalendarDays className="w-5 h-5" />, roles: ['Admin'] },

@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import toast from 'react-hot-toast';
-import { Calendar, Clock, CheckCircle, FileText, Plus, BarChart3, Sun } from 'lucide-react';
+import { Calendar, Clock, CheckCircle, FileText, Plus, BarChart3, Sun, IndianRupee } from 'lucide-react';
 import io from 'socket.io-client';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
@@ -16,17 +16,24 @@ const EmployeeDashboard = () => {
     const navigate = useNavigate();
 
     const [leaves, setLeaves] = useState([]);
+    const [reimbursements, setReimbursements] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    // Apply Leave Form State
+    // Apply Form State
     const [leaveType, setLeaveType] = useState('Sick Leave');
     const [fromDate, setFromDate] = useState('');
     const [toDate, setToDate] = useState('');
     const [reason, setReason] = useState('');
     const [applying, setApplying] = useState(false);
 
+    // Reimbursement Form State
+    const [reimbursementAmount, setReimbursementAmount] = useState('');
+    const [reimbursementDate, setReimbursementDate] = useState('');
+    const [reimbursementDescription, setReimbursementDescription] = useState('');
+    const [applyingReimbursement, setApplyingReimbursement] = useState(false);
+
     useEffect(() => {
-        fetchLeaves();
+        fetchData();
 
         // Setup Socket connection for real-time leave status updates
         const SOCKET_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
@@ -37,19 +44,23 @@ const EmployeeDashboard = () => {
         socket.on('leave_status_updated', (data) => {
             if (data.userId === user._id) {
                 toast(`The status of your leave was updated to ${data.status}!`, { icon: '🔔' });
-                fetchLeaves(); // Refresh the list
+                fetchData(); // Refresh the list
             }
         });
 
         return () => socket.disconnect();
     }, [user._id]);
 
-    const fetchLeaves = async () => {
+    const fetchData = async () => {
         try {
-            const { data } = await api.get('/leaves');
-            setLeaves(data);
+            const [leavesRes, reimbursementsRes] = await Promise.all([
+                api.get('/leaves'),
+                api.get('/reimbursements/my')
+            ]);
+            setLeaves(leavesRes.data);
+            setReimbursements(reimbursementsRes.data);
         } catch (error) {
-            toast.error('Failed to fetch leaves');
+            toast.error('Failed to fetch data');
         } finally {
             setLoading(false);
         }
@@ -69,7 +80,7 @@ const EmployeeDashboard = () => {
             if (data.isRisky) {
                 toast('Your leave request has been flagged for review due to unusual patterns.', { icon: '⚠️' });
             }
-            fetchLeaves();
+            fetchData();
             // Reset form and navigate to history
             setLeaveType('Sick Leave');
             setFromDate('');
@@ -80,6 +91,29 @@ const EmployeeDashboard = () => {
             toast.error(error.response?.data?.message || 'Failed to apply leave');
         } finally {
             setApplying(false);
+        }
+    };
+
+    const handleApplyReimbursement = async (e) => {
+        e.preventDefault();
+        setApplyingReimbursement(true);
+        try {
+            await api.post('/reimbursements', {
+                amount: reimbursementAmount,
+                date: reimbursementDate,
+                description: reimbursementDescription
+            });
+            toast.success('Reimbursement applied successfully');
+            fetchData();
+            // Reset form
+            setReimbursementAmount('');
+            setReimbursementDate('');
+            setReimbursementDescription('');
+            // Optional: navigate to reimbursements history if we had a separate path
+        } catch (error) {
+            toast.error(error.response?.data?.message || 'Failed to apply reimbursement');
+        } finally {
+            setApplyingReimbursement(false);
         }
     };
 
@@ -260,128 +294,338 @@ const EmployeeDashboard = () => {
             {/* APPLY FORM VIEW */}
             {
                 location.pathname === '/apply' && (
-                    <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-gray-100 dark:border-slate-700 overflow-hidden max-w-2xl mx-auto">
-                        <div className="px-6 py-5 border-b border-gray-100 dark:border-slate-700 flex justify-between items-center bg-gray-50/50 dark:bg-slate-800/50">
-                            <h3 className="text-xl font-bold text-gray-900 dark:text-white">Apply for Leave</h3>
+                    <div className="max-w-4xl mx-auto">
+                        <div className="flex items-center justify-between mb-8">
+                            <div>
+                                <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Request New Leave</h3>
+                                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Please provide the details for your leave application. Your manager will receive a notification for approval.</p>
+                            </div>
+                            <div className="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300">
+                                <span className="mr-2">Balance:</span>
+                                <span className="text-indigo-600 dark:text-indigo-400">{user?.leaveBalance} Days Remaining</span>
+                            </div>
                         </div>
 
-                        <form onSubmit={handleApplyLeave} className="p-6 space-y-5">
-                            <div>
-                                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">Leave Type</label>
-                                <select
-                                    value={leaveType}
-                                    onChange={(e) => setLeaveType(e.target.value)}
-                                    className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none transition-shadow shadow-sm font-medium"
-                                >
-                                    <option>Sick Leave</option>
-                                    <option>Casual Leave</option>
-                                    <option>Annual Leave</option>
-                                    <option>Unpaid Leave</option>
-                                </select>
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-4">
+                        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-[0_2px_10px_rgb(0,0,0,0.06)] dark:shadow-none border border-gray-100 dark:border-slate-700 overflow-hidden mb-6">
+                            <form onSubmit={handleApplyLeave} className="p-8 space-y-6">
                                 <div>
-                                    <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">From</label>
-                                    <input
-                                        type="date"
+                                    <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Leave Type</label>
+                                    <select
+                                        value={leaveType}
+                                        onChange={(e) => setLeaveType(e.target.value)}
+                                        className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none transition-shadow text-sm"
+                                    >
+                                        <option>Select Leave Type</option>
+                                        <option>Sick Leave</option>
+                                        <option>Casual Leave</option>
+                                        <option>Annual Leave</option>
+                                        <option>Unpaid Leave</option>
+                                    </select>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-6">
+                                    <div>
+                                        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">From Date</label>
+                                        <input
+                                            type="date"
+                                            required
+                                            value={fromDate}
+                                            onChange={(e) => setFromDate(e.target.value)}
+                                            className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none transition-shadow text-sm"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">To Date</label>
+                                        <input
+                                            type="date"
+                                            required
+                                            value={toDate}
+                                            onChange={(e) => setToDate(e.target.value)}
+                                            className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none transition-shadow text-sm"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Reason / Notes</label>
+                                    <textarea
                                         required
-                                        value={fromDate}
-                                        onChange={(e) => setFromDate(e.target.value)}
-                                        className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none transition-shadow shadow-sm format-date"
-                                    />
+                                        rows="4"
+                                        value={reason}
+                                        onChange={(e) => setReason(e.target.value)}
+                                        className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none transition-shadow text-sm resize-none"
+                                        placeholder="Briefly explain the reason for your leave request..."
+                                    ></textarea>
+                                </div>
+
+                                <div className="border-2 border-dashed border-gray-200 dark:border-slate-600 rounded-xl p-8 text-center bg-gray-50/50 dark:bg-slate-800/50 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
+                                    <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-indigo-50 dark:bg-indigo-900/30 text-indigo-500 mb-3">
+                                        <FileText className="w-5 h-5" />
+                                    </div>
+                                    <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                        Drag and drop supporting documents or <span className="text-indigo-600 dark:text-indigo-400 font-bold">browse</span>
+                                    </p>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                        (Optional - for medical certificates or official documents)
+                                    </p>
+                                </div>
+
+                                <div className="pt-4 border-t border-gray-100 dark:border-slate-700 flex items-center justify-between">
+                                    <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center">
+                                        <Clock className="w-4 h-4 mr-1" />
+                                        Your request will be sent to your manager for approval.
+                                    </p>
+                                    <div className="flex gap-3">
+                                        <button
+                                            type="button"
+                                            onClick={() => navigate('/')}
+                                            className="px-6 py-2.5 text-sm font-bold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
+                                        >
+                                            Cancel
+                                        </button>
+                                        <button
+                                            type="submit"
+                                            disabled={applying}
+                                            className="px-6 py-2.5 bg-indigo-600 text-white text-sm font-bold rounded-lg hover:bg-indigo-700 transition disabled:opacity-70"
+                                        >
+                                            {applying ? 'Submitting...' : 'Submit Request'}
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        {/* Stats Row */}
+                        <div className="grid grid-cols-3 gap-4">
+                            <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 p-4 flex items-center gap-4">
+                                <div className="w-10 h-10 rounded-full bg-green-50 dark:bg-green-900/30 text-green-500 flex items-center justify-center">
+                                    <CheckCircle className="w-5 h-5" />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">To</label>
-                                    <input
-                                        type="date"
-                                        required
-                                        value={toDate}
-                                        onChange={(e) => setToDate(e.target.value)}
-                                        className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none transition-shadow shadow-sm format-date"
-                                    />
+                                    <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Approved</p>
+                                    <p className="text-lg font-bold text-gray-900 dark:text-white">{approvedCount} Days</p>
                                 </div>
                             </div>
-
-                            <div>
-                                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">Reason</label>
-                                <textarea
-                                    required
-                                    rows="3"
-                                    value={reason}
-                                    onChange={(e) => setReason(e.target.value)}
-                                    className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none transition-shadow shadow-sm resize-none"
-                                    placeholder="Need time off for personal errands..."
-                                ></textarea>
+                            <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 p-4 flex items-center gap-4">
+                                <div className="w-10 h-10 rounded-full bg-yellow-50 dark:bg-yellow-900/30 text-yellow-500 flex items-center justify-center">
+                                    <Clock className="w-5 h-5" />
+                                </div>
+                                <div>
+                                    <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Pending</p>
+                                    <p className="text-lg font-bold text-gray-900 dark:text-white">{pendingCount} Days</p>
+                                </div>
                             </div>
-
-                            <div className="pt-2 flex gap-3">
-                                <button
-                                    type="button"
-                                    onClick={() => navigate('/')}
-                                    className="flex-1 px-4 py-3 border border-gray-300 dark:border-slate-600 text-gray-700 dark:text-gray-300 rounded-xl font-bold hover:bg-gray-50 dark:hover:bg-slate-700 transition"
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    type="submit"
-                                    disabled={applying}
-                                    className="flex-1 px-4 py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition shadow-lg shadow-indigo-200 dark:shadow-none disabled:opacity-70 disabled:cursor-not-allowed"
-                                >
-                                    {applying ? 'Submitting...' : 'Submit Request'}
-                                </button>
+                            <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 p-4 flex items-center gap-4">
+                                <div className="w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-500 flex items-center justify-center">
+                                    <Calendar className="w-5 h-5" />
+                                </div>
+                                <div>
+                                    <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Available</p>
+                                    <p className="text-lg font-bold text-gray-900 dark:text-white">{user?.leaveBalance} Days</p>
+                                </div>
                             </div>
-                        </form>
+                        </div>
                     </div>
                 )}
 
             {/* COMPANY HOLIDAYS VIEW */}
             {
                 location.pathname === '/holidays' && (
-                    <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-gray-100 dark:border-slate-700 overflow-hidden max-w-4xl mx-auto">
-                        <div className="px-6 py-6 border-b border-gray-100 dark:border-slate-700 flex items-center justify-between bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-slate-800/80 dark:to-slate-800/40">
+                    <div className="bg-transparent overflow-hidden max-w-6xl mx-auto">
+                        <div className="flex items-center justify-between mb-6">
                             <div>
-                                <h3 className="text-xl font-bold text-gray-900 dark:text-white flex items-center">
-                                    <Sun className="w-6 h-6 mr-3 text-orange-500" />
+                                <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
                                     Official Company Holidays
                                 </h3>
-                                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 ml-9">Plan your leaves around these upcoming days off.</p>
+                                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">View and track corporate observed days off for the upcoming fiscal year.</p>
                             </div>
-                            <div className="bg-white dark:bg-slate-700 px-4 py-2 rounded-xl shadow-sm text-sm font-bold text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-slate-600">
-                                {new Date().getFullYear()} Calendar
+                            <div className="flex items-center gap-3">
+                                <div className="bg-gray-100 dark:bg-slate-800 p-1 rounded-lg flex items-center text-sm font-semibold">
+                                    <span className="px-3 py-1 text-gray-500 dark:text-gray-400">2025</span>
+                                    <span className="px-3 py-1 bg-white dark:bg-slate-700 text-gray-900 dark:text-white shadow-sm rounded-md">2026</span>
+                                </div>
+                                <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-sm transition-colors flex items-center gap-2">
+                                    <FileText className="w-4 h-4" />
+                                    Export PDF
+                                </button>
                             </div>
                         </div>
 
-                        <div className="p-2 sm:p-6">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                {[
-                                    { name: "New Year's Day", date: "January 1", day: "Monday", type: "Public" },
-                                    { name: "Martin Luther King Jr. Day", date: "January 15", day: "Monday", type: "Public" },
-                                    { name: "Memorial Day", date: "May 27", day: "Monday", type: "Public" },
-                                    { name: "Independence Day", date: "July 4", day: "Thursday", type: "Public" },
-                                    { name: "Labor Day", date: "September 2", day: "Monday", type: "Public" },
-                                    { name: "Thanksgiving Day", date: "November 28", day: "Thursday", type: "Public" },
-                                    { name: "Day after Thanksgiving", date: "November 29", day: "Friday", type: "Public" },
-                                    { name: "Christmas Eve", date: "December 24", day: "Tuesday", type: "Corporate" },
-                                    { name: "Christmas Day", date: "December 25", day: "Wednesday", type: "Public" },
-                                ].map((holiday, idx) => (
-                                    <div key={idx} className="flex items-center p-4 rounded-2xl border border-gray-100 dark:border-slate-700 bg-gray-50/50 dark:bg-slate-800/50 hover:bg-indigo-50 dark:hover:bg-slate-700 transition-colors group">
-                                        <div className="w-14 h-14 rounded-xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 flex flex-col items-center justify-center shadow-sm group-hover:border-indigo-300 dark:group-hover:border-indigo-500 transition-colors shrink-0">
-                                            <span className="text-xs font-bold text-red-500 uppercase">{holiday.date.split(' ')[0].substring(0, 3)}</span>
-                                            <span className="text-lg font-black text-gray-900 dark:text-white leading-none mt-0.5">{holiday.date.split(' ')[1]}</span>
-                                        </div>
-                                        <div className="ml-4 flex-1">
-                                            <h4 className="font-bold text-gray-900 dark:text-white">{holiday.name}</h4>
-                                            <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">{holiday.day}</p>
-                                        </div>
-                                        <div>
-                                            <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md ${holiday.type === 'Public' ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400' : 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400'
-                                                }`}>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                            {[
+                                { name: "New Year's Day", date: "JANUARY 01", day: "Thursday", type: "PUBLIC", image: "https://images.unsplash.com/photo-1546271876-068d184bf40c?auto=format&fit=crop&q=80&w=400&h=200", upcoming: false },
+                                { name: "Lunar New Year", date: "JANUARY 29", day: "Thursday", type: "PUBLIC", image: "https://images.unsplash.com/photo-1549448937-dbaca2c6680a?auto=format&fit=crop&q=80&w=400&h=200", upcoming: false },
+                                { name: "Good Friday", date: "APRIL 03", day: "Friday", type: "PUBLIC", image: "https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&q=80&w=400&h=200", upcoming: false },
+                                { name: "Labor Day", date: "MAY 01", day: "Friday", type: "COMPANY", image: "https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?auto=format&fit=crop&q=80&w=400&h=200", upcoming: true },
+                                { name: "Independence Day", date: "AUGUST 15", day: "Friday", type: "PUBLIC", image: "https://images.unsplash.com/photo-1532375810565-98317781fbc9?auto=format&fit=crop&q=80&w=400&h=200", upcoming: false },
+                                { name: "Gandhi Jayanti", date: "OCTOBER 02", day: "Friday", type: "PUBLIC", image: "https://images.unsplash.com/photo-1561336313-0bd5e0b27ec8?auto=format&fit=crop&q=80&w=400&h=200", upcoming: false },
+                                { name: "Diwali", date: "NOVEMBER 01", day: "Sunday", type: "PUBLIC", image: "https://images.unsplash.com/photo-1514222134-b57cbb8ce073?auto=format&fit=crop&q=80&w=400&h=200", upcoming: false },
+                                { name: "Christmas Day", date: "DECEMBER 25", day: "Friday", type: "PUBLIC", image: "https://images.unsplash.com/photo-1512389142860-9c449e58a543?auto=format&fit=crop&q=80&w=400&h=200", upcoming: false },
+                            ].map((holiday, idx) => (
+                                <div key={idx} className="bg-white dark:bg-slate-800 rounded-2xl overflow-hidden shadow-[0_2px_10px_rgb(0,0,0,0.06)] dark:shadow-none border border-gray-100 dark:border-slate-700 flex flex-col group hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-shadow">
+                                    <div className="h-32 w-full relative overflow-hidden bg-gray-100 dark:bg-slate-700">
+                                        <img src={holiday.image} alt={holiday.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                        {holiday.upcoming && (
+                                            <div className="absolute top-3 right-3 bg-indigo-500 text-white text-[10px] font-bold px-2 py-1 rounded">
+                                                UPCOMING
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className="p-5 flex-1 flex flex-col">
+                                        <div className="flex justify-between items-center mb-2">
+                                            <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400">{holiday.date}</span>
+                                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${holiday.type === 'PUBLIC' ? 'bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400' : 'bg-green-50 text-green-600 dark:bg-green-900/30 dark:text-green-400'}`}>
                                                 {holiday.type}
                                             </span>
                                         </div>
+                                        <h4 className="font-bold text-gray-900 dark:text-white text-lg mb-4">{holiday.name}</h4>
+                                        <div className="mt-auto flex items-center text-sm text-gray-500 dark:text-gray-400 font-medium">
+                                            <Calendar className="w-4 h-4 mr-2" />
+                                            {holiday.day}
+                                        </div>
                                     </div>
-                                ))}
+                                </div>
+                            ))}
+                        </div>
+
+                        <div className="mt-8 bg-blue-50/50 dark:bg-slate-800/50 rounded-2xl p-6 border border-blue-100 dark:border-slate-700 flex items-start gap-4">
+                            <div className="p-2 bg-white dark:bg-slate-700 rounded-full text-blue-600 dark:text-blue-400 shadow-sm shrink-0">
+                                <FileText className="w-5 h-5" />
+                            </div>
+                            <div className="flex-1">
+                                <h4 className="font-bold text-gray-900 dark:text-white text-sm">Holiday Policy Note</h4>
+                                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">All holidays listed above are fully paid for full-time employees.</p>
+                            </div>
+                            <button className="text-sm font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 transition-colors whitespace-nowrap">
+                                View HR Handbook &rarr;
+                            </button>
+                        </div>
+                    </div>
+                )}
+
+            {/* REIMBURSEMENTS VIEW */}
+            {
+                location.pathname === '/reimbursements' && (
+                    <div className="space-y-6 max-w-5xl mx-auto">
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+                            <div>
+                                <h2 className="text-2xl font-bold text-gray-800 dark:text-white tracking-tight">Reimbursement Center</h2>
+                                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Submit travel expenses and track your active claims.</p>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            {/* APPLY REIMBURSEMENT FORM */}
+                            <div className="lg:col-span-1 bg-white dark:bg-slate-800 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-gray-100 dark:border-slate-700 overflow-hidden h-fit">
+                                <div className="px-6 py-5 border-b border-gray-100 dark:border-slate-700 bg-gray-50/50 dark:bg-slate-800/50">
+                                    <h3 className="text-lg font-bold text-gray-900 dark:text-white flex items-center">
+                                        <Plus className="w-5 h-5 mr-2 text-indigo-500" />
+                                        New Claim
+                                    </h3>
+                                </div>
+                                <form onSubmit={handleApplyReimbursement} className="p-6 space-y-5">
+                                    <div>
+                                        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">Amount (₹)</label>
+                                        <div className="relative">
+                                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <IndianRupee className="h-5 w-5 text-gray-400" />
+                                            </div>
+                                            <input
+                                                type="number"
+                                                required min="1"
+                                                value={reimbursementAmount}
+                                                onChange={(e) => setReimbursementAmount(e.target.value)}
+                                                className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none transition-shadow shadow-sm font-medium"
+                                                placeholder="0.00"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">Expense Date</label>
+                                        <input
+                                            type="date"
+                                            required
+                                            value={reimbursementDate}
+                                            onChange={(e) => setReimbursementDate(e.target.value)}
+                                            className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none transition-shadow shadow-sm format-date"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">Description</label>
+                                        <textarea
+                                            required
+                                            rows="3"
+                                            value={reimbursementDescription}
+                                            onChange={(e) => setReimbursementDescription(e.target.value)}
+                                            className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none transition-shadow shadow-sm resize-none"
+                                            placeholder="Client lunch, Flight to NY..."
+                                        ></textarea>
+                                    </div>
+                                    <div className="pt-2">
+                                        <button
+                                            type="submit"
+                                            disabled={applyingReimbursement}
+                                            className="w-full py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition shadow-lg shadow-indigo-200 dark:shadow-none disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center"
+                                        >
+                                            {applyingReimbursement ? 'Submitting...' : 'Submit Claim'}
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+
+                            {/* REIMBURSEMENTS HISTORY */}
+                            <div className="lg:col-span-2 bg-white dark:bg-slate-800 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-gray-100 dark:border-slate-700 overflow-hidden">
+                                <div className="px-6 py-5 border-b border-gray-100 dark:border-slate-700 flex items-center justify-between bg-gray-50/50 dark:bg-slate-800/50">
+                                    <h3 className="text-lg font-bold text-gray-800 dark:text-white flex items-center">
+                                        <FileText className="w-5 h-5 mr-3 text-indigo-500" />
+                                        Your Claims
+                                    </h3>
+                                </div>
+
+                                <div className="overflow-x-auto">
+                                    {loading ? (
+                                        <div className="flex justify-center p-12">
+                                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+                                        </div>
+                                    ) : reimbursements.length === 0 ? (
+                                        <div className="p-12 text-center text-gray-500 dark:text-gray-400">
+                                            <IndianRupee className="w-12 h-12 mx-auto text-gray-300 dark:text-slate-600 mb-4" />
+                                            <p className="text-lg font-medium text-gray-900 dark:text-gray-200">No claims found</p>
+                                            <p className="mt-1">You haven't submitted any reimbursement claims yet.</p>
+                                        </div>
+                                    ) : (
+                                        <table className="w-full text-left text-sm whitespace-nowrap">
+                                            <thead className="bg-gray-50 dark:bg-slate-900/50 text-gray-500 dark:text-gray-400 border-b border-gray-100 dark:border-slate-700">
+                                                <tr>
+                                                    <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Date</th>
+                                                    <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Description</th>
+                                                    <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Amount</th>
+                                                    <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Status</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-gray-50 dark:divide-slate-700/50">
+                                                {reimbursements.map((reimb) => (
+                                                    <tr key={reimb._id} className="hover:bg-gray-50 dark:hover:bg-slate-800/50 transition duration-150">
+                                                        <td className="px-6 py-4 text-gray-500 dark:text-gray-400">
+                                                            {new Date(reimb.date).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
+                                                        </td>
+                                                        <td className="px-6 py-4 text-gray-900 dark:text-gray-200 font-medium truncate max-w-[200px]" title={reimb.description}>
+                                                            {reimb.description}
+                                                        </td>
+                                                        <td className="px-6 py-4 font-bold text-gray-900 dark:text-white">
+                                                            ₹{reimb.amount.toLocaleString()}
+                                                        </td>
+                                                        <td className="px-6 py-4">
+                                                            <span className={`px-3 py-1.5 text-xs font-bold uppercase tracking-wider rounded-md ${statusColors[reimb.status]}`}>
+                                                                {reimb.status}
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     </div>

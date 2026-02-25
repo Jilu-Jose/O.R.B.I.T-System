@@ -4,6 +4,7 @@ import api from '../services/api';
 import toast from 'react-hot-toast';
 import { Check, X as CancelIcon, Filter, Search, BarChart3 } from 'lucide-react';
 import io from 'socket.io-client';
+import { IndianRupee } from 'lucide-react';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -33,6 +34,7 @@ ChartJS.register(
 const ManagerDashboard = () => {
     const { user } = useAuth();
     const [leaves, setLeaves] = useState([]);
+    const [reimbursements, setReimbursements] = useState([]);
     const [analytics, setAnalytics] = useState(null);
     const [loading, setLoading] = useState(true);
 
@@ -58,11 +60,13 @@ const ManagerDashboard = () => {
 
     const fetchData = async () => {
         try {
-            const [leavesRes, analyticsRes] = await Promise.all([
+            const [leavesRes, reimbursementsRes, analyticsRes] = await Promise.all([
                 api.get('/leaves'),
+                api.get('/reimbursements'),
                 api.get('/analytics')
             ]);
             setLeaves(leavesRes.data);
+            setReimbursements(reimbursementsRes.data);
             setAnalytics(analyticsRes.data);
         } catch (error) {
             toast.error('Failed to fetch dashboard data');
@@ -81,9 +85,25 @@ const ManagerDashboard = () => {
         }
     };
 
+    const handleUpdateReimbursementStatus = async (id, status) => {
+        try {
+            await api.patch(`/reimbursements/${id}`, { status });
+            toast.success(`Reimbursement request ${status.toLowerCase()}`);
+            fetchData();
+        } catch (error) {
+            toast.error(error.response?.data?.message || 'Failed to update status');
+        }
+    };
+
     const filteredLeaves = leaves.filter(leave => {
         const matchStatus = statusFilter === 'All' || leave.status === statusFilter;
         const matchSearch = leave.userId?.name.toLowerCase().includes(searchQuery.toLowerCase());
+        return matchStatus && matchSearch;
+    });
+
+    const filteredReimbursements = reimbursements.filter(reimb => {
+        const matchStatus = statusFilter === 'All' || reimb.status === statusFilter;
+        const matchSearch = reimb.userId?.name.toLowerCase().includes(searchQuery.toLowerCase());
         return matchStatus && matchSearch;
     });
 
@@ -303,6 +323,92 @@ const ManagerDashboard = () => {
                                                     </button>
                                                     <button
                                                         onClick={() => handleUpdateStatus(leave._id, 'Rejected')}
+                                                        className="p-1.5 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg transition dark:bg-red-900/30 dark:hover:bg-red-800/50 dark:text-red-400"
+                                                        title="Reject"
+                                                    >
+                                                        <CancelIcon className="w-5 h-5" />
+                                                    </button>
+                                                </div>
+                                            ) : (
+                                                <span className="text-sm text-gray-400 dark:text-gray-500 italic font-medium">Processed</span>
+                                            )}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    )}
+                </div>
+            </div>
+
+            {/* Reimbursements Approval Table */}
+            <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-gray-100 dark:border-slate-700 overflow-hidden">
+                <div className="p-6 border-b border-gray-100 dark:border-slate-700 bg-gray-50/50 dark:bg-slate-800/50">
+                    <div className="flex items-center gap-3">
+                        <IndianRupee className="w-6 h-6 text-indigo-500" />
+                        <h3 className="text-lg font-bold text-gray-800 dark:text-white">Reimbursement Approvals</h3>
+                    </div>
+                </div>
+
+                <div className="overflow-x-auto">
+                    {loading ? (
+                        <div className="flex justify-center p-12">
+                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+                        </div>
+                    ) : filteredReimbursements.length === 0 ? (
+                        <div className="p-12 text-center text-gray-500 dark:text-gray-400">
+                            No reimbursement requests found matching filters.
+                        </div>
+                    ) : (
+                        <table className="w-full text-left text-sm whitespace-nowrap">
+                            <thead className="bg-gray-50 dark:bg-slate-900/50 text-gray-500 dark:text-gray-400 border-b border-gray-100 dark:border-slate-700">
+                                <tr>
+                                    <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Employee</th>
+                                    <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Date</th>
+                                    <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Description</th>
+                                    <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Amount</th>
+                                    <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Status</th>
+                                    <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-gray-50 dark:divide-slate-700/50">
+                                {filteredReimbursements.map((reimb) => (
+                                    <tr key={reimb._id} className="hover:bg-gray-50 dark:hover:bg-slate-800/50 transition duration-150">
+                                        <td className="px-6 py-4">
+                                            <div className="flex flex-col">
+                                                <span className="font-medium text-gray-900 dark:text-white">{reimb.userId?.name}</span>
+                                                <span className="text-xs text-gray-500 dark:text-gray-400">{reimb.userId?.department}</span>
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 text-gray-500 dark:text-gray-400">
+                                            {new Date(reimb.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                                        </td>
+                                        <td className="px-6 py-4 text-gray-500 dark:text-gray-400 truncate max-w-[200px]" title={reimb.description}>
+                                            {reimb.description}
+                                        </td>
+                                        <td className="px-6 py-4 font-bold text-gray-900 dark:text-white">
+                                            ₹{reimb.amount.toLocaleString()}
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <span className={`px-3 py-1.5 text-xs font-bold uppercase tracking-wider rounded-md ${reimb.status === 'Pending' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-500' :
+                                                reimb.status === 'Approved' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-500' :
+                                                    'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-500'
+                                                }`}>
+                                                {reimb.status}
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-4 text-center">
+                                            {reimb.status === 'Pending' ? (
+                                                <div className="flex items-center justify-center space-x-2">
+                                                    <button
+                                                        onClick={() => handleUpdateReimbursementStatus(reimb._id, 'Approved')}
+                                                        className="p-1.5 bg-green-100 hover:bg-green-200 text-green-700 rounded-lg transition dark:bg-green-900/30 dark:hover:bg-green-800/50 dark:text-green-400"
+                                                        title="Approve"
+                                                    >
+                                                        <Check className="w-5 h-5" />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleUpdateReimbursementStatus(reimb._id, 'Rejected')}
                                                         className="p-1.5 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg transition dark:bg-red-900/30 dark:hover:bg-red-800/50 dark:text-red-400"
                                                         title="Reject"
                                                     >
