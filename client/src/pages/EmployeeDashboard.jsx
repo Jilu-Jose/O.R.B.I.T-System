@@ -30,7 +30,10 @@ const EmployeeDashboard = () => {
 
         // Setup Socket connection for real-time leave status updates
         const SOCKET_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-        const socket = io(SOCKET_URL);
+        const socket = io(SOCKET_URL, {
+            withCredentials: true,
+            transports: ['websocket', 'polling'] // Try websocket first to avoid polling 400s
+        });
         socket.on('leave_status_updated', (data) => {
             if (data.userId === user._id) {
                 toast(`The status of your leave was updated to ${data.status}!`, { icon: '🔔' });

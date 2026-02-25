@@ -44,7 +44,10 @@ const ManagerDashboard = () => {
         fetchData();
 
         const SOCKET_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-        const socket = io(SOCKET_URL);
+        const socket = io(SOCKET_URL, {
+            withCredentials: true,
+            transports: ['websocket', 'polling']
+        });
         socket.on('new_leave_request', (data) => {
             toast(`New leave request from ${data.employeeName}`, { icon: '🔔' });
             fetchData();
