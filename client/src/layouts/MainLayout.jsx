@@ -31,7 +31,7 @@ const MainLayout = ({ children }) => {
     ];
 
     return (
-        <div className="flex h-screen bg-gray-50 dark:bg-slate-900 overflow-hidden font-sans">
+        <div className="flex h-screen bg-gray-50 dark:bg-black overflow-hidden font-sans">
 
             {/* Mobile Sidebar Overlay */}
             {sidebarOpen && (
@@ -42,10 +42,10 @@ const MainLayout = ({ children }) => {
             )}
 
             {/* Sidebar */}
-            <aside className={`fixed inset-y-0 left-0 z-30 w-64 bg-white dark:bg-slate-800 text-slate-700 dark:text-white border-r border-gray-100 dark:border-slate-700 transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-                <div className="flex items-center justify-between h-16 px-6 bg-gray-50/50 dark:bg-slate-900 border-b border-gray-100 dark:border-slate-700">
+            <aside className={`fixed inset-y-0 left-0 z-30 w-64 bg-white dark:bg-neutral-900 text-slate-700 dark:text-white border-r border-gray-100 dark:border-neutral-800 transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+                <div className="flex items-center justify-between h-16 px-6 bg-gray-50/50 dark:bg-black border-b border-gray-100 dark:border-neutral-800">
                     <div className="flex items-center space-x-2">
-                        <div className="w-8 h-8 flex items-center justify-center rounded-lg bg-indigo-500 text-white font-bold">O</div>
+                        <div className="w-8 h-8 flex items-center justify-center rounded-lg bg-orange-500 text-white font-bold">O</div>
                         <span className="text-xl font-bold text-gray-900 dark:text-white">O.R.B.I.T</span>
                     </div>
                     <button className="lg:hidden text-gray-400 hover:text-gray-600 dark:text-gray-300 dark:hover:text-white" onClick={() => setSidebarOpen(false)}>
@@ -66,8 +66,8 @@ const MainLayout = ({ children }) => {
                                 to={item.path}
                                 onClick={() => setSidebarOpen(false)}
                                 className={`flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${isActive
-                                    ? 'bg-indigo-600 text-white shadow-[0_4px_20px_rgb(79,70,229,0.25)]'
-                                    : 'text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700 hover:text-indigo-600 dark:hover:text-white'
+                                    ? 'bg-orange-600 text-white shadow-[0_4px_20px_rgb(79,70,229,0.25)]'
+                                    : 'text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700 hover:text-orange-600 dark:hover:text-white'
                                     }`}
                             >
                                 <span className="mr-3">{item.icon}</span>
@@ -82,7 +82,7 @@ const MainLayout = ({ children }) => {
             <div className="flex-1 flex flex-col overflow-hidden">
 
                 {/* Top Navbar */}
-                <header className="flex flex-shrink-0 items-center justify-between h-16 px-6 bg-white dark:bg-slate-800 border-b border-gray-100 dark:border-slate-700/50 shadow-[0_2px_10px_rgb(0,0,0,0.02)] transition-colors duration-200">
+                <header className="flex flex-shrink-0 items-center justify-between h-16 px-6 bg-white dark:bg-neutral-900 border-b border-gray-100 dark:border-neutral-800/50 shadow-[0_2px_10px_rgb(0,0,0,0.02)] transition-colors duration-200">
                     <div className="flex items-center">
                         <button
                             className="p-2 mr-4 text-gray-500 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 lg:hidden"
@@ -104,12 +104,12 @@ const MainLayout = ({ children }) => {
                             {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
                         </button>
 
-                        <div className="flex items-center pl-2 border-l border-gray-200 dark:border-slate-700">
+                        <div className="flex items-center pl-2 border-l border-gray-200 dark:border-neutral-800">
                             <div className="hidden md:flex flex-col items-end mr-3">
                                 <span className="text-sm font-medium text-gray-900 dark:text-white leading-tight">{user?.name}</span>
-                                <span className="text-xs text-indigo-600 dark:text-indigo-400 font-medium">{user?.role}</span>
+                                <span className="text-xs text-orange-600 dark:text-orange-400 font-medium">{user?.role}</span>
                             </div>
-                            <div className="h-9 w-9 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center text-indigo-700 dark:text-indigo-300 font-bold border border-indigo-200 dark:border-indigo-700 shadow-sm">
+                            <div className="h-9 w-9 rounded-full bg-orange-100 dark:bg-orange-900 flex items-center justify-center text-orange-700 dark:text-orange-300 font-bold border border-orange-200 dark:border-orange-700 shadow-sm">
                                 {user?.name?.charAt(0).toUpperCase()}
                             </div>
                         </div>
@@ -125,7 +125,7 @@ const MainLayout = ({ children }) => {
                 </header>
 
                 {/* Dynamic Page Content */}
-                <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 dark:bg-slate-900 p-4 sm:p-6 lg:p-8 transition-colors duration-200">
+                <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 dark:bg-black p-4 sm:p-6 lg:p-8 transition-colors duration-200">
                     <div className="mx-auto max-w-7xl animate-fade-in pb-12">
                         {children}
                     </div>

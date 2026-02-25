@@ -119,7 +119,7 @@ const AdminPanel = () => {
                 <h2 className="text-2xl font-bold text-gray-800 dark:text-white tracking-tight">Admin Terminal</h2>
                 <button
                     onClick={() => setShowAddModal(true)}
-                    className="flex items-center justify-center px-5 py-2.5 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition shadow-lg shadow-indigo-200 dark:shadow-none font-semibold text-sm"
+                    className="flex items-center justify-center px-5 py-2.5 bg-orange-600 text-white rounded-xl hover:bg-orange-700 transition shadow-lg shadow-orange-200 dark:shadow-none font-semibold text-sm"
                 >
                     <UserPlus className="w-5 h-5 mr-2" />
                     Add System User
@@ -128,9 +128,9 @@ const AdminPanel = () => {
 
             {/* Department Chart Row - Only on Dashboard */}
             {isDashboard && !loading && users.length > 0 && (
-                <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-gray-100 dark:border-slate-700 p-6">
+                <div className="bg-white dark:bg-neutral-900 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-gray-100 dark:border-neutral-800 p-6">
                     <h3 className="text-lg font-bold text-gray-800 dark:text-white flex items-center mb-6">
-                        <BarChart3 className="w-5 h-5 mr-3 text-indigo-500" />
+                        <BarChart3 className="w-5 h-5 mr-3 text-orange-500" />
                         Users by Department
                     </h3>
                     <div className="h-64 w-full relative">
@@ -151,7 +151,7 @@ const AdminPanel = () => {
                                                 return acc;
                                             }, {})
                                         ),
-                                        backgroundColor: 'rgba(99, 102, 241, 0.8)',
+                                        backgroundColor: 'rgba(249, 115, 22, 0.8)',
                                         borderRadius: 6,
                                     },
                                 ],
@@ -169,10 +169,10 @@ const AdminPanel = () => {
 
             {/* User Management Table - Only on User Management Tab */}
             {isUserManagement && (
-                <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-gray-100 dark:border-slate-700 overflow-hidden">
-                    <div className="px-6 py-5 border-b border-gray-100 dark:border-slate-700 bg-gray-50/50 dark:bg-slate-800/50">
+                <div className="bg-white dark:bg-neutral-900 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-gray-100 dark:border-neutral-800 overflow-hidden">
+                    <div className="px-6 py-5 border-b border-gray-100 dark:border-neutral-800 bg-gray-50/50 dark:bg-neutral-900/50">
                         <h3 className="text-lg font-bold text-gray-800 dark:text-white flex items-center">
-                            <Shield className="w-5 h-5 mr-3 text-indigo-500" />
+                            <Shield className="w-5 h-5 mr-3 text-orange-500" />
                             User Management
                         </h3>
                     </div>
@@ -180,11 +180,11 @@ const AdminPanel = () => {
                     <div className="overflow-x-auto">
                         {loading ? (
                             <div className="flex justify-center p-12">
-                                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+                                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600"></div>
                             </div>
                         ) : (
                             <table className="w-full text-left text-sm whitespace-nowrap">
-                                <thead className="bg-gray-50 dark:bg-slate-900/50 text-gray-500 dark:text-gray-400 border-b border-gray-100 dark:border-slate-700">
+                                <thead className="bg-gray-50 dark:bg-black/50 text-gray-500 dark:text-gray-400 border-b border-gray-100 dark:border-neutral-800">
                                     <tr>
                                         <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Name</th>
                                         <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Email</th>
@@ -209,14 +209,14 @@ const AdminPanel = () => {
                                                 <select
                                                     value={user.role}
                                                     onChange={(e) => handleRoleChange(user._id, e.target.value)}
-                                                    className={`px-3 py-1.5 text-xs font-bold uppercase tracking-wider rounded-md border-0 bg-opacity-20 focus:ring-2 focus:ring-indigo-500 cursor-pointer ${user.role === 'Admin' ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400' :
+                                                    className={`px-3 py-1.5 text-xs font-bold uppercase tracking-wider rounded-md border-0 bg-opacity-20 focus:ring-2 focus:ring-orange-500 cursor-pointer ${user.role === 'Admin' ? 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400' :
                                                         user.role === 'Manager' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400' :
                                                             'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
                                                         }`}
                                                 >
-                                                    <option value="Employee" className="font-normal text-gray-900 bg-white dark:bg-slate-800 dark:text-gray-100">Employee</option>
-                                                    <option value="Manager" className="font-normal text-gray-900 bg-white dark:bg-slate-800 dark:text-gray-100">Manager</option>
-                                                    <option value="Admin" className="font-normal text-gray-900 bg-white dark:bg-slate-800 dark:text-gray-100">Admin</option>
+                                                    <option value="Employee" className="font-normal text-gray-900 bg-white dark:bg-neutral-900 dark:text-gray-100">Employee</option>
+                                                    <option value="Manager" className="font-normal text-gray-900 bg-white dark:bg-neutral-900 dark:text-gray-100">Manager</option>
+                                                    <option value="Admin" className="font-normal text-gray-900 bg-white dark:bg-neutral-900 dark:text-gray-100">Admin</option>
                                                 </select>
                                             </td>
                                             <td className="px-6 py-4 text-right">
@@ -240,8 +240,8 @@ const AdminPanel = () => {
             {/* Add User Modal */}
             {showAddModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-fade-in">
-                    <div className="bg-white dark:bg-slate-800 rounded-3xl w-full max-w-md shadow-2xl overflow-hidden transform transition-all border border-gray-100 dark:border-slate-700">
-                        <div className="px-6 py-5 border-b border-gray-100 dark:border-slate-700 flex justify-between items-center bg-gray-50/50 dark:bg-slate-800/50">
+                    <div className="bg-white dark:bg-neutral-900 rounded-3xl w-full max-w-md shadow-2xl overflow-hidden transform transition-all border border-gray-100 dark:border-neutral-800">
+                        <div className="px-6 py-5 border-b border-gray-100 dark:border-neutral-800 flex justify-between items-center bg-gray-50/50 dark:bg-neutral-900/50">
                             <h3 className="text-xl font-bold text-gray-900 dark:text-white">Add User</h3>
                             <button
                                 onClick={() => setShowAddModal(false)}
@@ -257,7 +257,7 @@ const AdminPanel = () => {
                                 <input
                                     type="text" required
                                     value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                    className="w-full px-4 py-2.5 rounded-xl border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500/50 outline-none transition-shadow"
+                                    className="w-full px-4 py-2.5 rounded-xl border border-gray-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500/50 outline-none transition-shadow"
                                 />
                             </div>
 
@@ -266,7 +266,7 @@ const AdminPanel = () => {
                                 <input
                                     type="email" required
                                     value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                    className="w-full px-4 py-2.5 rounded-xl border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500/50 outline-none transition-shadow"
+                                    className="w-full px-4 py-2.5 rounded-xl border border-gray-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500/50 outline-none transition-shadow"
                                 />
                             </div>
 
@@ -275,7 +275,7 @@ const AdminPanel = () => {
                                 <input
                                     type="password" required minLength="6"
                                     value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                                    className="w-full px-4 py-2.5 rounded-xl border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500/50 outline-none transition-shadow"
+                                    className="w-full px-4 py-2.5 rounded-xl border border-gray-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500/50 outline-none transition-shadow"
                                 />
                             </div>
 
@@ -284,7 +284,7 @@ const AdminPanel = () => {
                                     <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">Role</label>
                                     <select
                                         value={formData.role} onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                                        className="w-full px-4 py-2.5 rounded-xl border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500/50 outline-none transition-shadow"
+                                        className="w-full px-4 py-2.5 rounded-xl border border-gray-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500/50 outline-none transition-shadow"
                                     >
                                         <option>Employee</option>
                                         <option>Manager</option>
@@ -296,7 +296,7 @@ const AdminPanel = () => {
                                     <input
                                         type="number" required min="0" max="60"
                                         value={formData.leaveBalance} onChange={(e) => setFormData({ ...formData, leaveBalance: Number(e.target.value) })}
-                                        className="w-full px-4 py-2.5 rounded-xl border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500/50 outline-none transition-shadow"
+                                        className="w-full px-4 py-2.5 rounded-xl border border-gray-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500/50 outline-none transition-shadow"
                                     />
                                 </div>
                             </div>
@@ -306,7 +306,7 @@ const AdminPanel = () => {
                                 <input
                                     type="text" required
                                     value={formData.department} onChange={(e) => setFormData({ ...formData, department: e.target.value })}
-                                    className="w-full px-4 py-2.5 rounded-xl border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500/50 outline-none transition-shadow"
+                                    className="w-full px-4 py-2.5 rounded-xl border border-gray-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500/50 outline-none transition-shadow"
                                     placeholder="e.g. Engineering"
                                 />
                             </div>
@@ -315,14 +315,14 @@ const AdminPanel = () => {
                                 <button
                                     type="button"
                                     onClick={() => setShowAddModal(false)}
-                                    className="flex-1 px-4 py-3 border border-gray-300 dark:border-slate-600 text-gray-700 dark:text-gray-300 rounded-xl font-bold hover:bg-gray-50 dark:hover:bg-slate-700 transition"
+                                    className="flex-1 px-4 py-3 border border-gray-300 dark:border-neutral-700 text-gray-700 dark:text-gray-300 rounded-xl font-bold hover:bg-gray-50 dark:hover:bg-slate-700 transition"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={addingUser}
-                                    className="flex-1 px-4 py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition shadow-lg shadow-indigo-200 dark:shadow-none disabled:opacity-70 disabled:cursor-not-allowed"
+                                    className="flex-1 px-4 py-3 bg-orange-600 text-white rounded-xl font-bold hover:bg-orange-700 transition shadow-lg shadow-orange-200 dark:shadow-none disabled:opacity-70 disabled:cursor-not-allowed"
                                 >
                                     {addingUser ? 'Saving...' : 'Save User'}
                                 </button>
@@ -334,10 +334,10 @@ const AdminPanel = () => {
 
             {/* Reimbursements Approval Table - Only on Dashboard */}
             {isDashboard && (
-                <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-gray-100 dark:border-slate-700 overflow-hidden mt-6">
-                    <div className="p-6 border-b border-gray-100 dark:border-slate-700 bg-gray-50/50 dark:bg-slate-800/50">
+                <div className="bg-white dark:bg-neutral-900 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-gray-100 dark:border-neutral-800 overflow-hidden mt-6">
+                    <div className="p-6 border-b border-gray-100 dark:border-neutral-800 bg-gray-50/50 dark:bg-neutral-900/50">
                         <div className="flex items-center gap-3">
-                            <IndianRupee className="w-6 h-6 text-indigo-500" />
+                            <IndianRupee className="w-6 h-6 text-orange-500" />
                             <h3 className="text-lg font-bold text-gray-800 dark:text-white">All Company Reimbursements</h3>
                         </div>
                     </div>
@@ -345,7 +345,7 @@ const AdminPanel = () => {
                     <div className="overflow-x-auto">
                         {loading ? (
                             <div className="flex justify-center p-12">
-                                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+                                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600"></div>
                             </div>
                         ) : reimbursements.length === 0 ? (
                             <div className="p-12 text-center text-gray-500 dark:text-gray-400">
@@ -353,7 +353,7 @@ const AdminPanel = () => {
                             </div>
                         ) : (
                             <table className="w-full text-left text-sm whitespace-nowrap">
-                                <thead className="bg-gray-50 dark:bg-slate-900/50 text-gray-500 dark:text-gray-400 border-b border-gray-100 dark:border-slate-700">
+                                <thead className="bg-gray-50 dark:bg-black/50 text-gray-500 dark:text-gray-400 border-b border-gray-100 dark:border-neutral-800">
                                     <tr>
                                         <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Employee</th>
                                         <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Date</th>

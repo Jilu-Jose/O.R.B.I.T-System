@@ -132,8 +132,8 @@ const ManagerDashboard = () => {
                 fill: true,
                 label: 'Leave Requests',
                 data: analytics.trendData.data,
-                borderColor: 'rgb(99, 102, 241)',
-                backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                borderColor: 'rgb(249, 115, 22)',
+                backgroundColor: 'rgba(249, 115, 22, 0.1)',
                 tension: 0.4,
             },
         ],
@@ -183,21 +183,21 @@ const ManagerDashboard = () => {
             {/* Analytics Cards */}
             {analytics && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div className="bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-gray-100 dark:border-slate-700 transition-transform hover:-translate-y-1">
+                    <div className="bg-white dark:bg-neutral-900 rounded-3xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-gray-100 dark:border-neutral-800 transition-transform hover:-translate-y-1">
                         <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Total Requests</p>
                         <h3 className="text-3xl font-bold text-gray-800 dark:text-white">{analytics.totalLeaves}</h3>
                     </div>
-                    <div className="bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-gray-100 dark:border-slate-700 transition-transform hover:-translate-y-1">
+                    <div className="bg-white dark:bg-neutral-900 rounded-3xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-gray-100 dark:border-neutral-800 transition-transform hover:-translate-y-1">
                         <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Pending Approval</p>
                         <h3 className="text-3xl font-bold text-yellow-500">{analytics.pendingLeaves}</h3>
                     </div>
-                    <div className="bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-gray-100 dark:border-slate-700 transition-transform hover:-translate-y-1">
+                    <div className="bg-white dark:bg-neutral-900 rounded-3xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-gray-100 dark:border-neutral-800 transition-transform hover:-translate-y-1">
                         <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Approval Rate</p>
                         <h3 className="text-3xl font-bold text-green-500">{analytics.approvalRate}%</h3>
                     </div>
-                    <div className="bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-gray-100 dark:border-slate-700 transition-transform hover:-translate-y-1">
+                    <div className="bg-white dark:bg-neutral-900 rounded-3xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-gray-100 dark:border-neutral-800 transition-transform hover:-translate-y-1">
                         <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Top Leave Type</p>
-                        <h3 className="text-2xl font-bold text-indigo-600 dark:text-indigo-400 truncate">{analytics.commonLeaveType}</h3>
+                        <h3 className="text-2xl font-bold text-orange-600 dark:text-orange-400 truncate">{analytics.commonLeaveType}</h3>
                     </div>
                 </div>
             )}
@@ -205,9 +205,9 @@ const ManagerDashboard = () => {
             {/* Chart Section */}
             {analytics && (
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div className="lg:col-span-2 bg-white dark:bg-slate-800 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-gray-100 dark:border-slate-700 p-6">
+                    <div className="lg:col-span-2 bg-white dark:bg-neutral-900 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-gray-100 dark:border-neutral-800 p-6">
                         <h3 className="text-lg font-bold text-gray-800 dark:text-white flex items-center mb-6">
-                            <BarChart3 className="w-5 h-5 mr-3 text-indigo-500" />
+                            <BarChart3 className="w-5 h-5 mr-3 text-orange-500" />
                             Monthly Leave Trends
                         </h3>
                         <div className="h-64 w-full relative">
@@ -215,9 +215,9 @@ const ManagerDashboard = () => {
                         </div>
                     </div>
 
-                    <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-gray-100 dark:border-slate-700 p-6">
+                    <div className="bg-white dark:bg-neutral-900 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-gray-100 dark:border-neutral-800 p-6">
                         <h3 className="text-lg font-bold text-gray-800 dark:text-white flex items-center mb-6">
-                            <BarChart3 className="w-5 h-5 mr-3 text-indigo-500" />
+                            <BarChart3 className="w-5 h-5 mr-3 text-orange-500" />
                             Status Distribution
                         </h3>
                         <div className="h-64 w-full relative flex items-center justify-center">
@@ -228,8 +228,8 @@ const ManagerDashboard = () => {
             )}
 
             {/* Leave Approval Table */}
-            <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-gray-100 dark:border-slate-700 overflow-hidden">
-                <div className="p-6 border-b border-gray-100 dark:border-slate-700 bg-gray-50/50 dark:bg-slate-800/50">
+            <div className="bg-white dark:bg-neutral-900 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-gray-100 dark:border-neutral-800 overflow-hidden">
+                <div className="p-6 border-b border-gray-100 dark:border-neutral-800 bg-gray-50/50 dark:bg-neutral-900/50">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <h3 className="text-lg font-bold text-gray-800 dark:text-white">Leave Approvals</h3>
 
@@ -241,7 +241,7 @@ const ManagerDashboard = () => {
                                     placeholder="Search employee..."
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="pl-9 pr-4 py-2 w-full sm:w-64 rounded-xl border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-sm focus:ring-2 focus:ring-indigo-500/50 outline-none transition-shadow"
+                                    className="pl-9 pr-4 py-2 w-full sm:w-64 rounded-xl border border-gray-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-sm focus:ring-2 focus:ring-orange-500/50 outline-none transition-shadow"
                                 />
                             </div>
 
@@ -250,7 +250,7 @@ const ManagerDashboard = () => {
                                 <select
                                     value={statusFilter}
                                     onChange={(e) => setStatusFilter(e.target.value)}
-                                    className="pl-9 pr-4 py-2 w-full sm:w-auto rounded-xl border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-sm focus:ring-2 focus:ring-indigo-500/50 outline-none appearance-none"
+                                    className="pl-9 pr-4 py-2 w-full sm:w-auto rounded-xl border border-gray-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-sm focus:ring-2 focus:ring-orange-500/50 outline-none appearance-none"
                                 >
                                     <option value="All">All Status</option>
                                     <option value="Pending">Pending</option>
@@ -265,7 +265,7 @@ const ManagerDashboard = () => {
                 <div className="overflow-x-auto">
                     {loading ? (
                         <div className="flex justify-center p-12">
-                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600"></div>
                         </div>
                     ) : filteredLeaves.length === 0 ? (
                         <div className="p-12 text-center text-gray-500 dark:text-gray-400">
@@ -273,7 +273,7 @@ const ManagerDashboard = () => {
                         </div>
                     ) : (
                         <table className="w-full text-left text-sm whitespace-nowrap">
-                            <thead className="bg-gray-50 dark:bg-slate-900/50 text-gray-500 dark:text-gray-400 border-b border-gray-100 dark:border-slate-700">
+                            <thead className="bg-gray-50 dark:bg-black/50 text-gray-500 dark:text-gray-400 border-b border-gray-100 dark:border-neutral-800">
                                 <tr>
                                     <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Employee</th>
                                     <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Leave Type</th>
@@ -342,10 +342,10 @@ const ManagerDashboard = () => {
             </div>
 
             {/* Reimbursements Approval Table */}
-            <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-gray-100 dark:border-slate-700 overflow-hidden">
-                <div className="p-6 border-b border-gray-100 dark:border-slate-700 bg-gray-50/50 dark:bg-slate-800/50">
+            <div className="bg-white dark:bg-neutral-900 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-gray-100 dark:border-neutral-800 overflow-hidden">
+                <div className="p-6 border-b border-gray-100 dark:border-neutral-800 bg-gray-50/50 dark:bg-neutral-900/50">
                     <div className="flex items-center gap-3">
-                        <IndianRupee className="w-6 h-6 text-indigo-500" />
+                        <IndianRupee className="w-6 h-6 text-orange-500" />
                         <h3 className="text-lg font-bold text-gray-800 dark:text-white">Reimbursement Approvals</h3>
                     </div>
                 </div>
@@ -353,7 +353,7 @@ const ManagerDashboard = () => {
                 <div className="overflow-x-auto">
                     {loading ? (
                         <div className="flex justify-center p-12">
-                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600"></div>
                         </div>
                     ) : filteredReimbursements.length === 0 ? (
                         <div className="p-12 text-center text-gray-500 dark:text-gray-400">
@@ -361,7 +361,7 @@ const ManagerDashboard = () => {
                         </div>
                     ) : (
                         <table className="w-full text-left text-sm whitespace-nowrap">
-                            <thead className="bg-gray-50 dark:bg-slate-900/50 text-gray-500 dark:text-gray-400 border-b border-gray-100 dark:border-slate-700">
+                            <thead className="bg-gray-50 dark:bg-black/50 text-gray-500 dark:text-gray-400 border-b border-gray-100 dark:border-neutral-800">
                                 <tr>
                                     <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Employee</th>
                                     <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Date</th>

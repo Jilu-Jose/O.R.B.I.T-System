@@ -167,7 +167,7 @@ const EmployeeDashboard = () => {
                         <h2 className="text-2xl font-bold text-gray-800 dark:text-white tracking-tight">Dashboard Overview</h2>
                         <button
                             onClick={() => navigate('/apply')}
-                            className="flex items-center justify-center px-5 py-2.5 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition shadow-lg shadow-indigo-200 dark:shadow-none font-semibold text-sm"
+                            className="flex items-center justify-center px-5 py-2.5 bg-orange-600 text-white rounded-xl hover:bg-orange-700 transition shadow-lg shadow-orange-200 dark:shadow-none font-semibold text-sm"
                         >
                             <Plus className="w-5 h-5 mr-2" />
                             Apply New Leave
@@ -177,7 +177,7 @@ const EmployeeDashboard = () => {
                     {/* Summary Cards and Charts */}
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         <div className="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-6">
-                            <div className="bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-gray-100 dark:border-slate-700 flex items-center justify-between transition-transform hover:-translate-y-1">
+                            <div className="bg-white dark:bg-neutral-900 rounded-3xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-gray-100 dark:border-neutral-800 flex items-center justify-between transition-transform hover:-translate-y-1">
                                 <div>
                                     <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Pending Leaves</p>
                                     <h3 className="text-4xl font-extrabold text-yellow-500 dark:text-yellow-400 tracking-tight">{pendingCount}</h3>
@@ -187,7 +187,7 @@ const EmployeeDashboard = () => {
                                 </div>
                             </div>
 
-                            <div className="bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-gray-100 dark:border-slate-700 flex items-center justify-between transition-transform hover:-translate-y-1">
+                            <div className="bg-white dark:bg-neutral-900 rounded-3xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-gray-100 dark:border-neutral-800 flex items-center justify-between transition-transform hover:-translate-y-1">
                                 <div>
                                     <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Approved Leaves</p>
                                     <h3 className="text-4xl font-extrabold text-green-500 dark:text-green-400 tracking-tight">{approvedCount}</h3>
@@ -197,11 +197,11 @@ const EmployeeDashboard = () => {
                                 </div>
                             </div>
 
-                            <div className="bg-gradient-to-br from-indigo-500 via-purple-500 to-indigo-600 rounded-3xl p-6 shadow-[0_8px_30px_rgb(79,70,229,0.2)] dark:shadow-none text-white flex items-center justify-between transition-transform hover:-translate-y-1 sm:col-span-2">
+                            <div className="bg-gradient-to-br from-orange-500 via-amber-500 to-orange-600 rounded-3xl p-6 shadow-[0_8px_30px_rgb(79,70,229,0.2)] dark:shadow-none text-white flex items-center justify-between transition-transform hover:-translate-y-1 sm:col-span-2">
                                 <div>
-                                    <p className="text-sm font-medium text-indigo-100 mb-1">Remaining Balance</p>
+                                    <p className="text-sm font-medium text-orange-100 mb-1">Remaining Balance</p>
                                     <h3 className="text-4xl font-extrabold tracking-tight">
-                                        {user?.leaveBalance} <span className="text-xl font-semibold text-indigo-200 ml-1">Days</span>
+                                        {user?.leaveBalance} <span className="text-xl font-semibold text-orange-200 ml-1">Days</span>
                                     </h3>
                                 </div>
                                 <div className="p-4 bg-white/20 rounded-2xl text-white backdrop-blur-md shadow-sm border border-white/10">
@@ -211,9 +211,9 @@ const EmployeeDashboard = () => {
                         </div>
 
                         {/* Personal Analytics Chart */}
-                        <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-gray-100 dark:border-slate-700 p-6 flex flex-col">
+                        <div className="bg-white dark:bg-neutral-900 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-gray-100 dark:border-neutral-800 p-6 flex flex-col">
                             <h3 className="text-lg font-bold text-gray-800 dark:text-white flex items-center mb-6">
-                                <BarChart3 className="w-5 h-5 mr-3 text-indigo-500" />
+                                <BarChart3 className="w-5 h-5 mr-3 text-orange-500" />
                                 Leave Distribution
                             </h3>
                             <div className="flex-1 w-full relative flex items-center justify-center min-h-[200px]">
@@ -231,10 +231,10 @@ const EmployeeDashboard = () => {
             {/* LEAVE HISTORY VIEW */}
             {
                 location.pathname === '/history' && (
-                    <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-gray-100 dark:border-slate-700 overflow-hidden">
-                        <div className="px-6 py-5 border-b border-gray-100 dark:border-slate-700 flex items-center justify-between bg-gray-50/50 dark:bg-slate-800/50">
+                    <div className="bg-white dark:bg-neutral-900 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-gray-100 dark:border-neutral-800 overflow-hidden">
+                        <div className="px-6 py-5 border-b border-gray-100 dark:border-neutral-800 flex items-center justify-between bg-gray-50/50 dark:bg-neutral-900/50">
                             <h3 className="text-lg font-bold text-gray-800 dark:text-white flex items-center">
-                                <FileText className="w-5 h-5 mr-3 text-indigo-500" />
+                                <FileText className="w-5 h-5 mr-3 text-orange-500" />
                                 Recent Leave Applications
                             </h3>
                         </div>
@@ -242,7 +242,7 @@ const EmployeeDashboard = () => {
                         <div className="overflow-x-auto">
                             {loading ? (
                                 <div className="flex justify-center p-12">
-                                    <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600"></div>
+                                    <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-orange-600"></div>
                                 </div>
                             ) : leaves.length === 0 ? (
                                 <div className="p-12 text-center text-gray-500 dark:text-gray-400">
@@ -252,7 +252,7 @@ const EmployeeDashboard = () => {
                                 </div>
                             ) : (
                                 <table className="w-full text-left text-sm whitespace-nowrap">
-                                    <thead className="bg-gray-50 dark:bg-slate-900/50 text-gray-500 dark:text-gray-400 border-b border-gray-100 dark:border-slate-700">
+                                    <thead className="bg-gray-50 dark:bg-black/50 text-gray-500 dark:text-gray-400 border-b border-gray-100 dark:border-neutral-800">
                                         <tr>
                                             <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Leave Type</th>
                                             <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">From Date</th>
@@ -302,18 +302,18 @@ const EmployeeDashboard = () => {
                             </div>
                             <div className="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300">
                                 <span className="mr-2">Balance:</span>
-                                <span className="text-indigo-600 dark:text-indigo-400">{user?.leaveBalance} Days Remaining</span>
+                                <span className="text-orange-600 dark:text-orange-400">{user?.leaveBalance} Days Remaining</span>
                             </div>
                         </div>
 
-                        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-[0_2px_10px_rgb(0,0,0,0.06)] dark:shadow-none border border-gray-100 dark:border-slate-700 overflow-hidden mb-6">
+                        <div className="bg-white dark:bg-neutral-900 rounded-2xl shadow-[0_2px_10px_rgb(0,0,0,0.06)] dark:shadow-none border border-gray-100 dark:border-neutral-800 overflow-hidden mb-6">
                             <form onSubmit={handleApplyLeave} className="p-8 space-y-6">
                                 <div>
                                     <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Leave Type</label>
                                     <select
                                         value={leaveType}
                                         onChange={(e) => setLeaveType(e.target.value)}
-                                        className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none transition-shadow text-sm"
+                                        className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 outline-none transition-shadow text-sm"
                                     >
                                         <option>Select Leave Type</option>
                                         <option>Sick Leave</option>
@@ -331,7 +331,7 @@ const EmployeeDashboard = () => {
                                             required
                                             value={fromDate}
                                             onChange={(e) => setFromDate(e.target.value)}
-                                            className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none transition-shadow text-sm"
+                                            className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 outline-none transition-shadow text-sm"
                                         />
                                     </div>
                                     <div>
@@ -341,7 +341,7 @@ const EmployeeDashboard = () => {
                                             required
                                             value={toDate}
                                             onChange={(e) => setToDate(e.target.value)}
-                                            className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none transition-shadow text-sm"
+                                            className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 outline-none transition-shadow text-sm"
                                         />
                                     </div>
                                 </div>
@@ -353,24 +353,24 @@ const EmployeeDashboard = () => {
                                         rows="4"
                                         value={reason}
                                         onChange={(e) => setReason(e.target.value)}
-                                        className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none transition-shadow text-sm resize-none"
+                                        className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 outline-none transition-shadow text-sm resize-none"
                                         placeholder="Briefly explain the reason for your leave request..."
                                     ></textarea>
                                 </div>
 
-                                <div className="border-2 border-dashed border-gray-200 dark:border-slate-600 rounded-xl p-8 text-center bg-gray-50/50 dark:bg-slate-800/50 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
-                                    <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-indigo-50 dark:bg-indigo-900/30 text-indigo-500 mb-3">
+                                <div className="border-2 border-dashed border-gray-200 dark:border-neutral-700 rounded-xl p-8 text-center bg-gray-50/50 dark:bg-neutral-900/50 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
+                                    <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-orange-50 dark:bg-orange-900/30 text-orange-500 mb-3">
                                         <FileText className="w-5 h-5" />
                                     </div>
                                     <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                                        Drag and drop supporting documents or <span className="text-indigo-600 dark:text-indigo-400 font-bold">browse</span>
+                                        Drag and drop supporting documents or <span className="text-orange-600 dark:text-orange-400 font-bold">browse</span>
                                     </p>
                                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                                         (Optional - for medical certificates or official documents)
                                     </p>
                                 </div>
 
-                                <div className="pt-4 border-t border-gray-100 dark:border-slate-700 flex items-center justify-between">
+                                <div className="pt-4 border-t border-gray-100 dark:border-neutral-800 flex items-center justify-between">
                                     <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center">
                                         <Clock className="w-4 h-4 mr-1" />
                                         Your request will be sent to your manager for approval.
@@ -386,7 +386,7 @@ const EmployeeDashboard = () => {
                                         <button
                                             type="submit"
                                             disabled={applying}
-                                            className="px-6 py-2.5 bg-indigo-600 text-white text-sm font-bold rounded-lg hover:bg-indigo-700 transition disabled:opacity-70"
+                                            className="px-6 py-2.5 bg-orange-600 text-white text-sm font-bold rounded-lg hover:bg-orange-700 transition disabled:opacity-70"
                                         >
                                             {applying ? 'Submitting...' : 'Submit Request'}
                                         </button>
@@ -397,7 +397,7 @@ const EmployeeDashboard = () => {
 
                         {/* Stats Row */}
                         <div className="grid grid-cols-3 gap-4">
-                            <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 p-4 flex items-center gap-4">
+                            <div className="bg-white dark:bg-neutral-900 rounded-xl border border-gray-100 dark:border-neutral-800 p-4 flex items-center gap-4">
                                 <div className="w-10 h-10 rounded-full bg-green-50 dark:bg-green-900/30 text-green-500 flex items-center justify-center">
                                     <CheckCircle className="w-5 h-5" />
                                 </div>
@@ -406,7 +406,7 @@ const EmployeeDashboard = () => {
                                     <p className="text-lg font-bold text-gray-900 dark:text-white">{approvedCount} Days</p>
                                 </div>
                             </div>
-                            <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 p-4 flex items-center gap-4">
+                            <div className="bg-white dark:bg-neutral-900 rounded-xl border border-gray-100 dark:border-neutral-800 p-4 flex items-center gap-4">
                                 <div className="w-10 h-10 rounded-full bg-yellow-50 dark:bg-yellow-900/30 text-yellow-500 flex items-center justify-center">
                                     <Clock className="w-5 h-5" />
                                 </div>
@@ -415,7 +415,7 @@ const EmployeeDashboard = () => {
                                     <p className="text-lg font-bold text-gray-900 dark:text-white">{pendingCount} Days</p>
                                 </div>
                             </div>
-                            <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 p-4 flex items-center gap-4">
+                            <div className="bg-white dark:bg-neutral-900 rounded-xl border border-gray-100 dark:border-neutral-800 p-4 flex items-center gap-4">
                                 <div className="w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-500 flex items-center justify-center">
                                     <Calendar className="w-5 h-5" />
                                 </div>
@@ -440,11 +440,11 @@ const EmployeeDashboard = () => {
                                 <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">View and track corporate observed days off for the upcoming fiscal year.</p>
                             </div>
                             <div className="flex items-center gap-3">
-                                <div className="bg-gray-100 dark:bg-slate-800 p-1 rounded-lg flex items-center text-sm font-semibold">
+                                <div className="bg-gray-100 dark:bg-neutral-900 p-1 rounded-lg flex items-center text-sm font-semibold">
                                     <span className="px-3 py-1 text-gray-500 dark:text-gray-400">2025</span>
-                                    <span className="px-3 py-1 bg-white dark:bg-slate-700 text-gray-900 dark:text-white shadow-sm rounded-md">2026</span>
+                                    <span className="px-3 py-1 bg-white dark:bg-neutral-800 text-gray-900 dark:text-white shadow-sm rounded-md">2026</span>
                                 </div>
-                                <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-sm transition-colors flex items-center gap-2">
+                                <button className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-sm transition-colors flex items-center gap-2">
                                     <FileText className="w-4 h-4" />
                                     Export PDF
                                 </button>
@@ -453,27 +453,27 @@ const EmployeeDashboard = () => {
 
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                             {[
-                                { name: "New Year's Day", date: "JANUARY 01", day: "Thursday", type: "PUBLIC", image: "https://images.unsplash.com/photo-1546271876-068d184bf40c?auto=format&fit=crop&q=80&w=400&h=200", upcoming: false },
-                                { name: "Lunar New Year", date: "JANUARY 29", day: "Thursday", type: "PUBLIC", image: "https://images.unsplash.com/photo-1549448937-dbaca2c6680a?auto=format&fit=crop&q=80&w=400&h=200", upcoming: false },
+                                { name: "New Year's Day", date: "JANUARY 01", day: "Thursday", type: "PUBLIC", image: "https://images.unsplash.com/photo-1467810563316-b5476525c0f9?auto=format&fit=crop&q=80&w=400&h=200", upcoming: false },
+                                { name: "Lunar New Year", date: "JANUARY 29", day: "Thursday", type: "PUBLIC", image: "https://d3i6fh83elv35t.cloudfront.net/static/2023/01/GettyImages-1458699303-e1674487584191-1024x576.jpg", upcoming: false },
                                 { name: "Good Friday", date: "APRIL 03", day: "Friday", type: "PUBLIC", image: "https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&q=80&w=400&h=200", upcoming: false },
                                 { name: "Labor Day", date: "MAY 01", day: "Friday", type: "COMPANY", image: "https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?auto=format&fit=crop&q=80&w=400&h=200", upcoming: true },
-                                { name: "Independence Day", date: "AUGUST 15", day: "Friday", type: "PUBLIC", image: "https://images.unsplash.com/photo-1532375810565-98317781fbc9?auto=format&fit=crop&q=80&w=400&h=200", upcoming: false },
-                                { name: "Gandhi Jayanti", date: "OCTOBER 02", day: "Friday", type: "PUBLIC", image: "https://images.unsplash.com/photo-1561336313-0bd5e0b27ec8?auto=format&fit=crop&q=80&w=400&h=200", upcoming: false },
-                                { name: "Diwali", date: "NOVEMBER 01", day: "Sunday", type: "PUBLIC", image: "https://images.unsplash.com/photo-1514222134-b57cbb8ce073?auto=format&fit=crop&q=80&w=400&h=200", upcoming: false },
-                                { name: "Christmas Day", date: "DECEMBER 25", day: "Friday", type: "PUBLIC", image: "https://images.unsplash.com/photo-1512389142860-9c449e58a543?auto=format&fit=crop&q=80&w=400&h=200", upcoming: false },
+                                { name: "Independence Day", date: "AUGUST 15", day: "Friday", type: "PUBLIC", image: "https://img.freepik.com/premium-photo/15th-august-happy-independence-day-india-hand-holding-indian-flag_343960-3262.jpg", upcoming: false },
+                                { name: "Gandhi Jayanti", date: "OCTOBER 02", day: "Friday", type: "PUBLIC", image: "https://images.moneycontrol.com/static-mcnews/2025/10/20251001063117_happy-gandhi-jayanti.jpeg?impolicy=website&width=770&height=431", upcoming: false },
+                                { name: "Diwali", date: "NOVEMBER 01", day: "Sunday", type: "PUBLIC", image: "https://images.unsplash.com/photo-1577083753695-e010191bacb5?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8ZGl3YWxpfGVufDB8fDB8fHww", upcoming: false },
+                                { name: "Christmas Day", date: "DECEMBER 25", day: "Friday", type: "PUBLIC", image: "https://media.istockphoto.com/id/1830908089/photo/christmas-tree-in-beautiful-snowy-winter-landscape.jpg?s=612x612&w=0&k=20&c=BG0GUUibtSWMCrGSYPFH2KNMQBgoPts0e-SJEqn3wo0=", upcoming: false },
                             ].map((holiday, idx) => (
-                                <div key={idx} className="bg-white dark:bg-slate-800 rounded-2xl overflow-hidden shadow-[0_2px_10px_rgb(0,0,0,0.06)] dark:shadow-none border border-gray-100 dark:border-slate-700 flex flex-col group hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-shadow">
-                                    <div className="h-32 w-full relative overflow-hidden bg-gray-100 dark:bg-slate-700">
+                                <div key={idx} className="bg-white dark:bg-neutral-900 rounded-2xl overflow-hidden shadow-[0_2px_10px_rgb(0,0,0,0.06)] dark:shadow-none border border-gray-100 dark:border-neutral-800 flex flex-col group hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-shadow">
+                                    <div className="h-32 w-full relative overflow-hidden bg-gray-100 dark:bg-neutral-800">
                                         <img src={holiday.image} alt={holiday.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                                         {holiday.upcoming && (
-                                            <div className="absolute top-3 right-3 bg-indigo-500 text-white text-[10px] font-bold px-2 py-1 rounded">
+                                            <div className="absolute top-3 right-3 bg-orange-500 text-white text-[10px] font-bold px-2 py-1 rounded">
                                                 UPCOMING
                                             </div>
                                         )}
                                     </div>
                                     <div className="p-5 flex-1 flex flex-col">
                                         <div className="flex justify-between items-center mb-2">
-                                            <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400">{holiday.date}</span>
+                                            <span className="text-xs font-bold text-orange-600 dark:text-orange-400">{holiday.date}</span>
                                             <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${holiday.type === 'PUBLIC' ? 'bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400' : 'bg-green-50 text-green-600 dark:bg-green-900/30 dark:text-green-400'}`}>
                                                 {holiday.type}
                                             </span>
@@ -488,15 +488,15 @@ const EmployeeDashboard = () => {
                             ))}
                         </div>
 
-                        <div className="mt-8 bg-blue-50/50 dark:bg-slate-800/50 rounded-2xl p-6 border border-blue-100 dark:border-slate-700 flex items-start gap-4">
-                            <div className="p-2 bg-white dark:bg-slate-700 rounded-full text-blue-600 dark:text-blue-400 shadow-sm shrink-0">
+                        <div className="mt-8 bg-blue-50/50 dark:bg-neutral-900/50 rounded-2xl p-6 border border-blue-100 dark:border-neutral-800 flex items-start gap-4">
+                            <div className="p-2 bg-white dark:bg-neutral-800 rounded-full text-blue-600 dark:text-blue-400 shadow-sm shrink-0">
                                 <FileText className="w-5 h-5" />
                             </div>
                             <div className="flex-1">
                                 <h4 className="font-bold text-gray-900 dark:text-white text-sm">Holiday Policy Note</h4>
                                 <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">All holidays listed above are fully paid for full-time employees.</p>
                             </div>
-                            <button className="text-sm font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 transition-colors whitespace-nowrap">
+                            <button className="text-sm font-bold text-orange-600 dark:text-orange-400 hover:text-orange-700 transition-colors whitespace-nowrap">
                                 View HR Handbook &rarr;
                             </button>
                         </div>
@@ -516,10 +516,10 @@ const EmployeeDashboard = () => {
 
                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                             {/* APPLY REIMBURSEMENT FORM */}
-                            <div className="lg:col-span-1 bg-white dark:bg-slate-800 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-gray-100 dark:border-slate-700 overflow-hidden h-fit">
-                                <div className="px-6 py-5 border-b border-gray-100 dark:border-slate-700 bg-gray-50/50 dark:bg-slate-800/50">
+                            <div className="lg:col-span-1 bg-white dark:bg-neutral-900 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-gray-100 dark:border-neutral-800 overflow-hidden h-fit">
+                                <div className="px-6 py-5 border-b border-gray-100 dark:border-neutral-800 bg-gray-50/50 dark:bg-neutral-900/50">
                                     <h3 className="text-lg font-bold text-gray-900 dark:text-white flex items-center">
-                                        <Plus className="w-5 h-5 mr-2 text-indigo-500" />
+                                        <Plus className="w-5 h-5 mr-2 text-orange-500" />
                                         New Claim
                                     </h3>
                                 </div>
@@ -535,7 +535,7 @@ const EmployeeDashboard = () => {
                                                 required min="1"
                                                 value={reimbursementAmount}
                                                 onChange={(e) => setReimbursementAmount(e.target.value)}
-                                                className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none transition-shadow shadow-sm font-medium"
+                                                className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 outline-none transition-shadow shadow-sm font-medium"
                                                 placeholder="0.00"
                                             />
                                         </div>
@@ -547,7 +547,7 @@ const EmployeeDashboard = () => {
                                             required
                                             value={reimbursementDate}
                                             onChange={(e) => setReimbursementDate(e.target.value)}
-                                            className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none transition-shadow shadow-sm format-date"
+                                            className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 outline-none transition-shadow shadow-sm format-date"
                                         />
                                     </div>
                                     <div>
@@ -557,7 +557,7 @@ const EmployeeDashboard = () => {
                                             rows="3"
                                             value={reimbursementDescription}
                                             onChange={(e) => setReimbursementDescription(e.target.value)}
-                                            className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none transition-shadow shadow-sm resize-none"
+                                            className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 outline-none transition-shadow shadow-sm resize-none"
                                             placeholder="Client lunch, Flight to NY..."
                                         ></textarea>
                                     </div>
@@ -565,7 +565,7 @@ const EmployeeDashboard = () => {
                                         <button
                                             type="submit"
                                             disabled={applyingReimbursement}
-                                            className="w-full py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition shadow-lg shadow-indigo-200 dark:shadow-none disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center"
+                                            className="w-full py-3 bg-orange-600 text-white rounded-xl font-bold hover:bg-orange-700 transition shadow-lg shadow-orange-200 dark:shadow-none disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center"
                                         >
                                             {applyingReimbursement ? 'Submitting...' : 'Submit Claim'}
                                         </button>
@@ -574,10 +574,10 @@ const EmployeeDashboard = () => {
                             </div>
 
                             {/* REIMBURSEMENTS HISTORY */}
-                            <div className="lg:col-span-2 bg-white dark:bg-slate-800 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-gray-100 dark:border-slate-700 overflow-hidden">
-                                <div className="px-6 py-5 border-b border-gray-100 dark:border-slate-700 flex items-center justify-between bg-gray-50/50 dark:bg-slate-800/50">
+                            <div className="lg:col-span-2 bg-white dark:bg-neutral-900 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-gray-100 dark:border-neutral-800 overflow-hidden">
+                                <div className="px-6 py-5 border-b border-gray-100 dark:border-neutral-800 flex items-center justify-between bg-gray-50/50 dark:bg-neutral-900/50">
                                     <h3 className="text-lg font-bold text-gray-800 dark:text-white flex items-center">
-                                        <FileText className="w-5 h-5 mr-3 text-indigo-500" />
+                                        <FileText className="w-5 h-5 mr-3 text-orange-500" />
                                         Your Claims
                                     </h3>
                                 </div>
@@ -585,7 +585,7 @@ const EmployeeDashboard = () => {
                                 <div className="overflow-x-auto">
                                     {loading ? (
                                         <div className="flex justify-center p-12">
-                                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+                                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600"></div>
                                         </div>
                                     ) : reimbursements.length === 0 ? (
                                         <div className="p-12 text-center text-gray-500 dark:text-gray-400">
@@ -595,7 +595,7 @@ const EmployeeDashboard = () => {
                                         </div>
                                     ) : (
                                         <table className="w-full text-left text-sm whitespace-nowrap">
-                                            <thead className="bg-gray-50 dark:bg-slate-900/50 text-gray-500 dark:text-gray-400 border-b border-gray-100 dark:border-slate-700">
+                                            <thead className="bg-gray-50 dark:bg-black/50 text-gray-500 dark:text-gray-400 border-b border-gray-100 dark:border-neutral-800">
                                                 <tr>
                                                     <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Date</th>
                                                     <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Description</th>
