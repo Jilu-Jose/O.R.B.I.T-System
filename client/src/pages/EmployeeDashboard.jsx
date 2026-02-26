@@ -24,12 +24,14 @@ const EmployeeDashboard = () => {
     const [fromDate, setFromDate] = useState('');
     const [toDate, setToDate] = useState('');
     const [reason, setReason] = useState('');
+    const [leaveDocument, setLeaveDocument] = useState(null);
     const [applying, setApplying] = useState(false);
 
     // Reimbursement Form State
     const [reimbursementAmount, setReimbursementAmount] = useState('');
     const [reimbursementDate, setReimbursementDate] = useState('');
     const [reimbursementDescription, setReimbursementDescription] = useState('');
+    const [reimbursementReceipt, setReimbursementReceipt] = useState(null);
     const [applyingReimbursement, setApplyingReimbursement] = useState(false);
 
     useEffect(() => {
@@ -54,7 +56,7 @@ const EmployeeDashboard = () => {
     const fetchData = async () => {
         try {
             const [leavesRes, reimbursementsRes] = await Promise.all([
-                api.get('/leaves'),
+                api.get('/leaves/my'),
                 api.get('/reimbursements/my')
             ]);
             setLeaves(leavesRes.data);
@@ -70,11 +72,17 @@ const EmployeeDashboard = () => {
         e.preventDefault();
         setApplying(true);
         try {
-            const { data } = await api.post('/leaves', {
-                leaveType,
-                fromDate,
-                toDate,
-                reason
+            const formData = new FormData();
+            formData.append('leaveType', leaveType);
+            formData.append('fromDate', fromDate);
+            formData.append('toDate', toDate);
+            formData.append('reason', reason);
+            if (leaveDocument) {
+                formData.append('document', leaveDocument);
+            }
+
+            const { data } = await api.post('/leaves', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
             });
             toast.success('Leave applied successfully');
             if (data.isRisky) {
@@ -86,6 +94,7 @@ const EmployeeDashboard = () => {
             setFromDate('');
             setToDate('');
             setReason('');
+            setLeaveDocument(null);
             navigate('/history');
         } catch (error) {
             toast.error(error.response?.data?.message || 'Failed to apply leave');
@@ -98,10 +107,16 @@ const EmployeeDashboard = () => {
         e.preventDefault();
         setApplyingReimbursement(true);
         try {
-            await api.post('/reimbursements', {
-                amount: reimbursementAmount,
-                date: reimbursementDate,
-                description: reimbursementDescription
+            const formData = new FormData();
+            formData.append('amount', reimbursementAmount);
+            formData.append('date', reimbursementDate);
+            formData.append('description', reimbursementDescription);
+            if (reimbursementReceipt) {
+                formData.append('receipt', reimbursementReceipt);
+            }
+
+            await api.post('/reimbursements', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
             });
             toast.success('Reimbursement applied successfully');
             fetchData();
@@ -109,6 +124,7 @@ const EmployeeDashboard = () => {
             setReimbursementAmount('');
             setReimbursementDate('');
             setReimbursementDescription('');
+            setReimbursementReceipt(null);
             // Optional: navigate to reimbursements history if we had a separate path
         } catch (error) {
             toast.error(error.response?.data?.message || 'Failed to apply reimbursement');
@@ -122,6 +138,7 @@ const EmployeeDashboard = () => {
 
     const statusColors = {
         Pending: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-500',
+        'Manager Approved': 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-500',
         Approved: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-500',
         Rejected: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-500'
     };
@@ -161,7 +178,7 @@ const EmployeeDashboard = () => {
         <div className="space-y-6">
 
             {/* DASHBOARD OVERVIEW VIEW */}
-            {location.pathname === '/' && (
+            {(location.pathname === '/' || location.pathname === '/employee') && (
                 <>
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                         <h2 className="text-2xl font-bold text-gray-800 dark:text-white tracking-tight">Dashboard Overview</h2>
@@ -258,6 +275,7 @@ const EmployeeDashboard = () => {
                                             <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">From Date</th>
                                             <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">To Date</th>
                                             <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Reason</th>
+                                            <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Document</th>
                                             <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Status</th>
                                         </tr>
                                     </thead>
@@ -275,6 +293,13 @@ const EmployeeDashboard = () => {
                                                 </td>
                                                 <td className="px-6 py-4 text-gray-500 dark:text-gray-400 truncate max-w-[200px]" title={leave.reason}>
                                                     {leave.reason}
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    {leave.documentUrl ? (
+                                                        <a href={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${leave.documentUrl}`} target="_blank" rel="noreferrer" className="text-orange-600 hover:underline text-sm font-medium">View doc</a>
+                                                    ) : (
+                                                        <span className="text-gray-400 text-sm">None</span>
+                                                    )}
                                                 </td>
                                                 <td className="px-6 py-4">
                                                     <span className={`px-3 py-1.5 text-xs font-bold uppercase tracking-wider rounded-md ${statusColors[leave.status]}`}>
@@ -358,14 +383,19 @@ const EmployeeDashboard = () => {
                                     ></textarea>
                                 </div>
 
-                                <div className="border-2 border-dashed border-gray-200 dark:border-neutral-700 rounded-xl p-8 text-center bg-gray-50/50 dark:bg-neutral-900/50 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
+                                <div className="border-2 border-dashed border-gray-200 dark:border-neutral-700 rounded-xl p-6 text-center bg-gray-50/50 dark:bg-neutral-900/50 hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
                                     <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-orange-50 dark:bg-orange-900/30 text-orange-500 mb-3">
                                         <FileText className="w-5 h-5" />
                                     </div>
-                                    <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                    <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                         Drag and drop supporting documents or <span className="text-orange-600 dark:text-orange-400 font-bold">browse</span>
                                     </p>
-                                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                    <input
+                                        type="file"
+                                        onChange={(e) => setLeaveDocument(e.target.files[0])}
+                                        className="text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100 dark:file:bg-orange-900/30 dark:file:text-orange-400 w-full"
+                                    />
+                                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
                                         (Optional - for medical certificates or official documents)
                                     </p>
                                 </div>
@@ -561,6 +591,14 @@ const EmployeeDashboard = () => {
                                             placeholder="Client lunch, Flight to NY..."
                                         ></textarea>
                                     </div>
+                                    <div>
+                                        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">Receipt (Optional)</label>
+                                        <input
+                                            type="file"
+                                            onChange={(e) => setReimbursementReceipt(e.target.files[0])}
+                                            className="w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100 dark:file:bg-orange-900/30 dark:file:text-orange-400"
+                                        />
+                                    </div>
                                     <div className="pt-2">
                                         <button
                                             type="submit"
@@ -600,6 +638,7 @@ const EmployeeDashboard = () => {
                                                     <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Date</th>
                                                     <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Description</th>
                                                     <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Amount</th>
+                                                    <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Receipt</th>
                                                     <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Status</th>
                                                 </tr>
                                             </thead>
@@ -614,6 +653,13 @@ const EmployeeDashboard = () => {
                                                         </td>
                                                         <td className="px-6 py-4 font-bold text-gray-900 dark:text-white">
                                                             ₹{reimb.amount.toLocaleString()}
+                                                        </td>
+                                                        <td className="px-6 py-4">
+                                                            {reimb.receiptUrl ? (
+                                                                <a href={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${reimb.receiptUrl}`} target="_blank" rel="noreferrer" className="text-orange-600 hover:underline text-sm font-medium">View receipt</a>
+                                                            ) : (
+                                                                <span className="text-gray-400 text-sm">None</span>
+                                                            )}
                                                         </td>
                                                         <td className="px-6 py-4">
                                                             <span className={`px-3 py-1.5 text-xs font-bold uppercase tracking-wider rounded-md ${statusColors[reimb.status]}`}>

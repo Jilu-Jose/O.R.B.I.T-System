@@ -24,7 +24,7 @@ const reimbursementSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['Pending', 'Approved', 'Rejected'],
+        enum: ['Pending', 'Manager Approved', 'Approved', 'Rejected'],
         default: 'Pending'
     },
     reviewedBy: {

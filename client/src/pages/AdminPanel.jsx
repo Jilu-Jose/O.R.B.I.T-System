@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import toast from 'react-hot-toast';
 import { UserPlus, Trash2, Shield, X, BarChart3, IndianRupee, Check } from 'lucide-react';
@@ -25,6 +26,7 @@ ChartJS.register(
 
 const AdminPanel = () => {
     const location = useLocation();
+    const { user: currentUser } = useAuth();
     const isDashboard = location.pathname === '/';
     const isUserManagement = location.pathname === '/users';
 
@@ -359,6 +361,7 @@ const AdminPanel = () => {
                                         <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Date</th>
                                         <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Description</th>
                                         <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Amount</th>
+                                        <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Receipt</th>
                                         <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Status</th>
                                         <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs text-center">Actions</th>
                                     </tr>
@@ -382,33 +385,52 @@ const AdminPanel = () => {
                                                 ₹{reimb.amount.toLocaleString()}
                                             </td>
                                             <td className="px-6 py-4">
+                                                {reimb.receiptUrl ? (
+                                                    <a href={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${reimb.receiptUrl}`} target="_blank" rel="noreferrer" className="text-orange-600 hover:underline text-sm font-medium">View receipt</a>
+                                                ) : (
+                                                    <span className="text-gray-400 text-sm">None</span>
+                                                )}
+                                            </td>
+                                            <td className="px-6 py-4">
                                                 <span className={`px-3 py-1.5 text-xs font-bold uppercase tracking-wider rounded-md ${reimb.status === 'Pending' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-500' :
-                                                    reimb.status === 'Approved' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-500' :
-                                                        'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-500'
+                                                    reimb.status === 'Manager Approved' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-500' :
+                                                        reimb.status === 'Approved' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-500' :
+                                                            'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-500'
                                                     }`}>
                                                     {reimb.status}
                                                 </span>
                                             </td>
                                             <td className="px-6 py-4 text-center">
-                                                {reimb.status === 'Pending' ? (
+                                                {/* Role based rendering of actions */}
+                                                {(
+                                                    // Manager can only approve employees who are Pending
+                                                    (currentUser?.role === 'Manager' && reimb.userId?.role === 'Employee' && reimb.status === 'Pending') ||
+                                                    // Admin can approve employees who are Manager Approved, OR managers who are Pending
+                                                    (currentUser?.role === 'Admin' && ((reimb.userId?.role === 'Employee' && reimb.status === 'Manager Approved') || (reimb.userId?.role === 'Manager' && reimb.status === 'Pending')))
+                                                ) ? (
                                                     <div className="flex items-center justify-center space-x-2">
                                                         <button
-                                                            onClick={() => handleUpdateReimbursementStatus(reimb._id, 'Approved')}
-                                                            className="p-1.5 bg-green-100 hover:bg-green-200 text-green-700 rounded-lg transition dark:bg-green-900/30 dark:hover:bg-green-800/50 dark:text-green-400"
-                                                            title="Approve"
+                                                            onClick={() => handleUpdateReimbursementStatus(reimb._id, currentUser?.role === 'Manager' ? 'Manager Approved' : 'Approved')}
+                                                            className="p-1.5 bg-green-100 hover:bg-green-200 text-green-700 rounded-lg transition dark:bg-green-900/30 dark:hover:bg-green-800/50 dark:text-green-400 flex items-center gap-1"
+                                                            title={currentUser?.role === 'Manager' ? 'Manager Approve' : 'Approve'}
                                                         >
-                                                            <Check className="w-5 h-5" />
+                                                            <Check className="w-4 h-4" />
+                                                            <span className="text-xs font-bold pr-1">{currentUser?.role === 'Manager' ? 'Approve' : 'Approve'}</span>
                                                         </button>
                                                         <button
                                                             onClick={() => handleUpdateReimbursementStatus(reimb._id, 'Rejected')}
-                                                            className="p-1.5 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg transition dark:bg-red-900/30 dark:hover:bg-red-800/50 dark:text-red-400"
+                                                            className="p-1.5 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg transition dark:bg-red-900/30 dark:hover:bg-red-800/50 dark:text-red-400 flex items-center gap-1"
                                                             title="Reject"
                                                         >
-                                                            <X className="w-5 h-5" />
+                                                            <X className="w-4 h-4" />
+                                                            <span className="text-xs font-bold pr-1">Reject</span>
                                                         </button>
                                                     </div>
                                                 ) : (
-                                                    <span className="text-sm text-gray-400 dark:text-gray-500 italic font-medium">Processed</span>
+                                                    // If none of the conditions match but it is pending, show waiting text
+                                                    (reimb.status === 'Pending' && currentUser?.role === 'Admin') ? <span className="text-xs text-yellow-600 dark:text-yellow-500 font-medium whitespace-nowrap">Waiting for Manager</span> :
+                                                        (reimb.status === 'Manager Approved' && currentUser?.role === 'Manager') ? <span className="text-xs text-blue-600 dark:text-blue-500 font-medium whitespace-nowrap">Waiting for Admin</span> :
+                                                            <span className="text-sm text-gray-400 dark:text-gray-500 italic font-medium">Processed</span>
                                                 )}
                                             </td>
                                         </tr>

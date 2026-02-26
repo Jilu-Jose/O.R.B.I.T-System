@@ -28,6 +28,8 @@ const DashboardRouter = () => {
                     <>
                         <Route path="/" element={<ManagerDashboard />} />
                         <Route path="/employee" element={<EmployeeDashboard />} />
+                        <Route path="/apply" element={<EmployeeDashboard />} />
+                        <Route path="/history" element={<EmployeeDashboard />} />
                         <Route path="/holidays" element={<EmployeeDashboard />} />
                         <Route path="/reimbursements" element={<EmployeeDashboard />} />
                         <Route path="*" element={<Navigate to="/" replace />} />
@@ -40,6 +42,8 @@ const DashboardRouter = () => {
                         <Route path="/users" element={<AdminPanel />} />
                         <Route path="/manager" element={<ManagerDashboard />} />
                         <Route path="/employee" element={<EmployeeDashboard />} />
+                        <Route path="/apply" element={<EmployeeDashboard />} />
+                        <Route path="/history" element={<EmployeeDashboard />} />
                         <Route path="/holidays" element={<EmployeeDashboard />} />
                         <Route path="/reimbursements" element={<EmployeeDashboard />} />
                         <Route path="*" element={<Navigate to="/" replace />} />

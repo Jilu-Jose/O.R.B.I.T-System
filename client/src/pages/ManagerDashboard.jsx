@@ -143,20 +143,22 @@ const ManagerDashboard = () => {
     const statusCounts = leaves.reduce((acc, leave) => {
         acc[leave.status] = (acc[leave.status] || 0) + 1;
         return acc;
-    }, { Pending: 0, Approved: 0, Rejected: 0 });
+    }, { Pending: 0, 'Manager Approved': 0, Approved: 0, Rejected: 0 });
 
     const doughnutData = {
-        labels: ['Pending', 'Approved', 'Rejected'],
+        labels: ['Pending', 'Manager Approved', 'Approved', 'Rejected'],
         datasets: [
             {
-                data: [statusCounts.Pending, statusCounts.Approved, statusCounts.Rejected],
+                data: [statusCounts.Pending, statusCounts['Manager Approved'], statusCounts.Approved, statusCounts.Rejected],
                 backgroundColor: [
                     'rgba(234, 179, 8, 0.8)',   // Yellow
+                    'rgba(59, 130, 246, 0.8)',  // Blue
                     'rgba(34, 197, 94, 0.8)',   // Green
                     'rgba(239, 68, 68, 0.8)',   // Red
                 ],
                 borderColor: [
                     'rgba(234, 179, 8, 1)',
+                    'rgba(59, 130, 246, 1)',
                     'rgba(34, 197, 94, 1)',
                     'rgba(239, 68, 68, 1)',
                 ],
@@ -254,6 +256,7 @@ const ManagerDashboard = () => {
                                 >
                                     <option value="All">All Status</option>
                                     <option value="Pending">Pending</option>
+                                    <option value="Manager Approved">Manager Approved</option>
                                     <option value="Approved">Approved</option>
                                     <option value="Rejected">Rejected</option>
                                 </select>
@@ -279,6 +282,7 @@ const ManagerDashboard = () => {
                                     <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Leave Type</th>
                                     <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Duration</th>
                                     <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Reason</th>
+                                    <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Document</th>
                                     <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Status</th>
                                     <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs text-center">Actions</th>
                                 </tr>
@@ -304,18 +308,32 @@ const ManagerDashboard = () => {
                                             {leave.reason}
                                         </td>
                                         <td className="px-6 py-4">
+                                            {leave.documentUrl ? (
+                                                <a href={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${leave.documentUrl}`} target="_blank" rel="noreferrer" className="text-orange-600 hover:underline text-sm font-medium">View doc</a>
+                                            ) : (
+                                                <span className="text-gray-400 text-sm">None</span>
+                                            )}
+                                        </td>
+                                        <td className="px-6 py-4">
                                             <span className={`px-3 py-1.5 text-xs font-bold uppercase tracking-wider rounded-md ${leave.status === 'Pending' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-500' :
-                                                leave.status === 'Approved' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-500' :
-                                                    'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-500'
+                                                leave.status === 'Manager Approved' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-500' :
+                                                    leave.status === 'Approved' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-500' :
+                                                        'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-500'
                                                 }`}>
                                                 {leave.status}
                                             </span>
                                         </td>
                                         <td className="px-6 py-4 text-center">
-                                            {leave.status === 'Pending' ? (
+                                            {/* Role based rendering of actions */}
+                                            {(
+                                                // Manager can only approve employees who are Pending
+                                                (user?.role === 'Manager' && leave.userId?.role === 'Employee' && leave.status === 'Pending') ||
+                                                // Admin can approve employees who are Manager Approved, OR managers who are Pending
+                                                (user?.role === 'Admin' && ((leave.userId?.role === 'Employee' && leave.status === 'Manager Approved') || (leave.userId?.role === 'Manager' && leave.status === 'Pending')))
+                                            ) ? (
                                                 <div className="flex items-center justify-center space-x-2">
                                                     <button
-                                                        onClick={() => handleUpdateStatus(leave._id, 'Approved')}
+                                                        onClick={() => handleUpdateStatus(leave._id, user?.role === 'Manager' ? 'Manager Approved' : 'Approved')}
                                                         className="p-1.5 bg-green-100 hover:bg-green-200 text-green-700 rounded-lg transition dark:bg-green-900/30 dark:hover:bg-green-800/50 dark:text-green-400"
                                                         title="Approve"
                                                     >
@@ -330,7 +348,10 @@ const ManagerDashboard = () => {
                                                     </button>
                                                 </div>
                                             ) : (
-                                                <span className="text-sm text-gray-400 dark:text-gray-500 italic font-medium">Processed</span>
+                                                // If none of the conditions match but it is pending, show waiting text
+                                                (leave.status === 'Pending' && user?.role === 'Admin') ? <span className="text-xs text-yellow-600 dark:text-yellow-500 font-medium whitespace-nowrap">Waiting for Manager</span> :
+                                                    (leave.status === 'Manager Approved' && user?.role === 'Manager') ? <span className="text-xs text-blue-600 dark:text-blue-500 font-medium whitespace-nowrap">Waiting for Admin</span> :
+                                                        <span className="text-sm text-gray-400 dark:text-gray-500 italic font-medium">Processed</span>
                                             )}
                                         </td>
                                     </tr>
@@ -367,6 +388,7 @@ const ManagerDashboard = () => {
                                     <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Date</th>
                                     <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Description</th>
                                     <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Amount</th>
+                                    <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Receipt</th>
                                     <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Status</th>
                                     <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs text-center">Actions</th>
                                 </tr>
@@ -390,18 +412,32 @@ const ManagerDashboard = () => {
                                             ₹{reimb.amount.toLocaleString()}
                                         </td>
                                         <td className="px-6 py-4">
+                                            {reimb.receiptUrl ? (
+                                                <a href={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${reimb.receiptUrl}`} target="_blank" rel="noreferrer" className="text-orange-600 hover:underline text-sm font-medium">View receipt</a>
+                                            ) : (
+                                                <span className="text-gray-400 text-sm">None</span>
+                                            )}
+                                        </td>
+                                        <td className="px-6 py-4">
                                             <span className={`px-3 py-1.5 text-xs font-bold uppercase tracking-wider rounded-md ${reimb.status === 'Pending' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-500' :
-                                                reimb.status === 'Approved' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-500' :
-                                                    'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-500'
+                                                reimb.status === 'Manager Approved' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-500' :
+                                                    reimb.status === 'Approved' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-500' :
+                                                        'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-500'
                                                 }`}>
                                                 {reimb.status}
                                             </span>
                                         </td>
                                         <td className="px-6 py-4 text-center">
-                                            {reimb.status === 'Pending' ? (
+                                            {/* Role based rendering of actions */}
+                                            {(
+                                                // Manager can only approve employees who are Pending
+                                                (user?.role === 'Manager' && reimb.userId?.role === 'Employee' && reimb.status === 'Pending') ||
+                                                // Admin can approve employees who are Manager Approved, OR managers who are Pending
+                                                (user?.role === 'Admin' && ((reimb.userId?.role === 'Employee' && reimb.status === 'Manager Approved') || (reimb.userId?.role === 'Manager' && reimb.status === 'Pending')))
+                                            ) ? (
                                                 <div className="flex items-center justify-center space-x-2">
                                                     <button
-                                                        onClick={() => handleUpdateReimbursementStatus(reimb._id, 'Approved')}
+                                                        onClick={() => handleUpdateReimbursementStatus(reimb._id, user?.role === 'Manager' ? 'Manager Approved' : 'Approved')}
                                                         className="p-1.5 bg-green-100 hover:bg-green-200 text-green-700 rounded-lg transition dark:bg-green-900/30 dark:hover:bg-green-800/50 dark:text-green-400"
                                                         title="Approve"
                                                     >
@@ -416,7 +452,10 @@ const ManagerDashboard = () => {
                                                     </button>
                                                 </div>
                                             ) : (
-                                                <span className="text-sm text-gray-400 dark:text-gray-500 italic font-medium">Processed</span>
+                                                // If none of the conditions match but it is pending, show waiting text
+                                                (reimb.status === 'Pending' && user?.role === 'Admin') ? <span className="text-xs text-yellow-600 dark:text-yellow-500 font-medium whitespace-nowrap">Waiting for Manager</span> :
+                                                    (reimb.status === 'Manager Approved' && user?.role === 'Manager') ? <span className="text-xs text-blue-600 dark:text-blue-500 font-medium whitespace-nowrap">Waiting for Admin</span> :
+                                                        <span className="text-sm text-gray-400 dark:text-gray-500 italic font-medium">Processed</span>
                                             )}
                                         </td>
                                     </tr>

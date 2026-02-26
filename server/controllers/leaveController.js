@@ -60,14 +60,20 @@ const applyLeave = async (req, res, next) => {
         // AI Risk Indicator logic
         const isRisky = checkRiskIndicator(req.user, fromDateObj, toDateObj, diffDays);
 
-        const leave = await Leave.create({
+        const leaveData = {
             userId: req.user._id,
             leaveType,
             fromDate: fromDateObj,
             toDate: toDateObj,
             reason,
-            status: 'Pending',
-        });
+            status: req.user.role === 'Manager' ? 'Pending' : 'Pending', // Standard start state
+        };
+
+        if (req.file) {
+            leaveData.documentUrl = `/uploads/${req.file.filename}`;
+        }
+
+        const leave = await Leave.create(leaveData);
 
         if (leave) {
             await ActivityLog.create({
@@ -116,10 +122,24 @@ const getLeaves = async (req, res, next) => {
         }
 
         const leaves = await Leave.find(query)
-            .populate('userId', 'name email department')
+            .populate('userId', 'name email department role')
             .sort({ createdAt: -1 });
 
         res.json(leaves);
+    } catch (error) {
+        next(error);
+    }
+};
+
+// @desc    Get my leaves
+// @route   GET /api/leaves/my
+// @access  Private
+const getMyLeaves = async (req, res, next) => {
+    try {
+        const leaves = await Leave.find({ userId: req.user._id })
+            .populate('userId', 'name email department role')
+            .sort({ createdAt: -1 });
+        res.status(200).json(leaves);
     } catch (error) {
         next(error);
     }
@@ -144,18 +164,50 @@ const updateLeaveStatus = async (req, res, next) => {
         }
 
         const user = await User.findById(leave.userId);
-        const diffTime = Math.abs(leave.toDate - leave.fromDate);
+        if (!user) {
+            res.status(404);
+            return next(new Error('User associated with this leave not found'));
+        }
+
+        // Prevent Managers from approving managers or themselves fully
+        if (req.user.role === 'Manager') {
+            if (user.role === 'Manager' || user.role === 'Admin') {
+                res.status(403);
+                return next(new Error('Managers can only review Employee requests.'));
+            }
+            if (status === 'Approved') {
+                res.status(403);
+                return next(new Error('Managers can only set status to "Manager Approved" or "Rejected"'));
+            }
+            if (status !== 'Manager Approved' && status !== 'Rejected') {
+                res.status(400);
+                return next(new Error('Invalid status for Manager role'));
+            }
+        }
+
+        // Logic for Admins
+        if (req.user.role === 'Admin') {
+            // Admin can approve Manager's requests directly
+            if (user.role === 'Employee' && status === 'Approved' && leave.status !== 'Manager Approved') {
+                res.status(400);
+                return next(new Error('Employee leaves must be "Manager Approved" before Admin can "Approve" them.'));
+            }
+        }
+
+        // Leave Balance Auto Calculation - Only deduct upon final 'Approved' status
+        const fromDateObj = new Date(leave.fromDate);
+        const toDateObj = new Date(leave.toDate);
+        const diffTime = Math.abs(toDateObj - fromDateObj);
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
 
-        // Leave Balance Auto Calculation
         if (status === 'Approved' && leave.status !== 'Approved') {
             if (user.leaveBalance < diffDays) {
                 res.status(400);
                 return next(new Error('Employee has insufficient leave balance'));
             }
             user.leaveBalance -= diffDays;
-        } else if (leave.status === 'Approved' && status === 'Rejected') {
-            // Restore on rejection if previously approved
+        } else if (leave.status === 'Approved' && status !== 'Approved') {
+            // Restore on rejection/reversal if previously fully approved
             user.leaveBalance += diffDays;
         }
 
@@ -222,6 +274,7 @@ const deleteLeave = async (req, res, next) => {
 module.exports = {
     applyLeave,
     getLeaves,
+    getMyLeaves,
     updateLeaveStatus,
     deleteLeave,
 };

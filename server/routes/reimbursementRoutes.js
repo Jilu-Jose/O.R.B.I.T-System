@@ -7,9 +7,10 @@ const {
     updateReimbursementStatus
 } = require('../controllers/reimbursementController');
 const { protect, authorize } = require('../middleware/authMiddleware');
+const upload = require('../middleware/upload');
 
 router.route('/')
-    .post(protect, createReimbursement)
+    .post(protect, upload.single('receipt'), createReimbursement)
     .get(protect, authorize('Manager', 'Admin'), getAllReimbursements);
 
 router.route('/my')

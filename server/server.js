@@ -49,6 +49,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use('/api/', apiLimiter);
 
+// Static file serving for uploads
+app.use('/uploads', express.static('uploads'));
+
 // Routes
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/users', require('./routes/userRoutes'));
